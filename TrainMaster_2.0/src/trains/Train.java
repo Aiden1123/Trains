@@ -11,6 +11,7 @@ public class Train extends IdObject {
 	int power;		//kWh
 	int maxSpeed;	//km/h
 	int length;
+	int capacity;
 	
 	TrainTemplate model;
 	TrainLine line;

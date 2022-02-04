@@ -8,7 +8,10 @@ public class RailVehicleTemplate extends NamedObject{
 	int maxspeed;
 	int length; 
 	
-	RailVehicleTemplate(String name) {
+	RailVehicleTemplate(String name, int mass, int maxspeed, int length) {
 		super(name);
+		this.mass = mass;
+		this.maxspeed = maxspeed;
+		this.length = length;
 	}
 }

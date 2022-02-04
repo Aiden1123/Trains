@@ -7,4 +7,20 @@ public class RailVehicle extends IdObject {
 
 	RailVehicleTemplate model;
 	Train train;
+	
+	RailVehicle(RailVehicleTemplate model) {
+		this.model = model;
+	}
+
+	public Train getTrain() {
+		return train;
+	}
+
+	public void setTrain(Train train) {
+		this.train = train;
+	}
+
+	public RailVehicleTemplate getModel() {
+		return model;
+	}
 }

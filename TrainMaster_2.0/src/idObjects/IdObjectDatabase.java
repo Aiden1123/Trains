@@ -2,7 +2,7 @@ package idObjects;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class IdObjectDatabse<T extends IdObject> {
+public class IdObjectDatabase<T extends IdObject> {
 	
 	ArrayList<T> array = new ArrayList<T>();
 	

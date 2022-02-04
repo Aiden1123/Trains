@@ -13,6 +13,7 @@ public class TrainTemplate extends NamedObject{
 	int power;		//kWh
 	int maxSpeed;	//km/h
 	int length;
+	int capacity;
 	
 	ArrayList<RailVehicle> cars = new ArrayList<RailVehicle>();
 	
