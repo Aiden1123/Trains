@@ -1,15 +1,10 @@
 package trains;
-import namedObjects.*;
+import idObjects.*;
 
-public class RailVehicle extends NamedObject {
+public class RailVehicle extends IdObject {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -9040645256763290347L;
 
-	
-	RailVehicle(String name) {
-		super(name);
-	}
+	RailVehicleTemplate model;
+	Train train;
 }
