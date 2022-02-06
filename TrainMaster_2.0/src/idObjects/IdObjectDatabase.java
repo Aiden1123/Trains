@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class IdObjectDatabase<T extends IdObject> {
 	
-	ArrayList<T> array = new ArrayList<T>();
+	protected ArrayList<T> array = new ArrayList<T>();
 	
 	boolean idTaken(int id) {
 		for(T i: array) {
@@ -15,7 +15,7 @@ public class IdObjectDatabase<T extends IdObject> {
 		return false;
 	}
 
-	int add(T object) {
+	public int add(T object) {
 		Random rand = new Random();
 		int id;
 		do {
@@ -26,11 +26,11 @@ public class IdObjectDatabase<T extends IdObject> {
 		return id;
 	}
 	
-	void remove(T object) {
+	public void remove(T object) {
 		array.remove(object);
 	}
 	
-	void remove(int id) {
+	public void remove(int id) {
 		T aux = find(id);
 		if (aux==null) {
 			return;
@@ -38,7 +38,7 @@ public class IdObjectDatabase<T extends IdObject> {
 		array.remove(aux);
 	}
 	
-	T find(int id) {
+	public T find(int id) {
 		for(T i: array) {
 			if (i.getId()==id) {
 				return i;

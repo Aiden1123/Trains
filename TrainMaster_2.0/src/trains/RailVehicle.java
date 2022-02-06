@@ -10,6 +10,13 @@ public class RailVehicle extends IdObject {
 	
 	RailVehicle(RailVehicleTemplate model) {
 		this.model = model;
+		this.train = null;
+	}
+	
+	public void printInfo() {
+		System.out.printf("id: %d\nmodel: ",id);
+		System.out.println(model.getName());
+		System.out.println("Current location: " + ((train == null) ? "Depot" : "appended to train: " + Integer.toString(train.getId())));
 	}
 
 	public Train getTrain() {

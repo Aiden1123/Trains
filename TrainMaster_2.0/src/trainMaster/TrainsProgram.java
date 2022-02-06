@@ -2,11 +2,14 @@ package trainMaster;
 
 import java.io.File;
 import java.util.Scanner;
+import trains.*;
 
 public class TrainsProgram {
 	
 	static TrainLineDatabase lines;
 	static StationDatabase stations;
+	static RailVehicleTemplateDatabase RVmodels;
+	static RailVehicleDatabase RVs;
 	
 	public static void executeScript(String filename) {
 	    try {
@@ -59,7 +62,65 @@ public class TrainsProgram {
 								}
 								stations.add(new Station(instruction[i]));
 							}
-							break;							
+							break;
+						case "carriage":
+							if (!(RVmodels.nameExists(instruction[2]))) {
+								System.out.println("Invalid model name");
+								break;
+							}
+							try {
+							RVs.add(new Carriage((CarriageTemplate)RVmodels.find(instruction[2])));
+							} catch(ClassCastException e) {
+								System.out.println(RVmodels.find(instruction[2]) + "is not a carriage!");
+							}
+							break;
+						case "emu":
+							if (!(RVmodels.nameExists(instruction[2]))) {
+								System.out.println("Invalid model name");
+								break;
+							}
+							try {
+							RVs.add(new Emu((EmuTemplate)RVmodels.find(instruction[2])));
+							} catch(ClassCastException e) {
+								System.out.println(RVmodels.find(instruction[2]) + "is not an EMU!");
+							}
+							break;
+						case "loco":
+							if (!(RVmodels.nameExists(instruction[2]))) {
+								System.out.println("Invalid model name");
+								break;
+							}
+							try {
+							RVs.add(new Locomotive((LocomotiveTemplate)RVmodels.find(instruction[2])));
+							} catch(ClassCastException e) {
+								System.out.println(RVmodels.find(instruction[2]) + "is not a locomotive!");
+							}
+							break;					
+							
+						case "template":
+							switch(instruction[2]) {
+								case "carriage": 
+									RVmodels.add(new CarriageTemplate(instruction[3],Integer.parseInt(instruction[4]),
+																					Integer.parseInt(instruction[5]), 
+																					Integer.parseInt(instruction[6]), 
+																					Integer.parseInt(instruction[7])));
+									break;
+								case "emu":
+									RVmodels.add(new EmuTemplate(instruction[3],Integer.parseInt(instruction[4]),
+																					Integer.parseInt(instruction[5]), 
+																					Integer.parseInt(instruction[6]), 
+																					Integer.parseInt(instruction[7]),
+																					Integer.parseInt(instruction[8])));
+									break;
+								case "loco":
+									RVmodels.add(new LocomotiveTemplate(instruction[3],Integer.parseInt(instruction[4]),
+																					Integer.parseInt(instruction[5]), 
+																					Integer.parseInt(instruction[6]), 
+																					Integer.parseInt(instruction[7])));
+									break;
+								case "train":
+									break;
+							}
 					}
 					break;
 				
@@ -129,6 +190,15 @@ public class TrainsProgram {
 						case "linesExchanges":
 							lines.printNamesExchanges();
 							break;
+						case "RVmodels":
+							RVmodels.printInfoAll();
+							break;
+						case "RVnames":
+							RVmodels.printNames();
+							break;
+						case "RVs":
+							RVs.printInfoAll();
+							break;
 					}
 					break;
 				
@@ -163,6 +233,8 @@ public class TrainsProgram {
 
 		lines = new TrainLineDatabase();
 		stations = new StationDatabase();
+		RVmodels = new RailVehicleTemplateDatabase();
+		RVs = new RailVehicleDatabase();
 		Scanner sc=new Scanner(System.in);  
 		String[] instruction;
 		
