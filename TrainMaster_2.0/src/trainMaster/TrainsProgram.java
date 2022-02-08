@@ -10,6 +10,7 @@ public class TrainsProgram {
 	static StationDatabase stations;
 	static RailVehicleTemplateDatabase RVmodels;
 	static RailVehicleDatabase RVs;
+	static TrainDatabase trains;
 	
 	public static void executeScript(String filename) {
 	    try {
@@ -121,6 +122,10 @@ public class TrainsProgram {
 								case "train":
 									break;
 							}
+							break;
+						case "train":
+							trains.add(new Train());
+							break;
 					}
 					break;
 				
@@ -145,6 +150,24 @@ public class TrainsProgram {
 					}
 					break;
 					
+				case "attach":
+					if(instruction[1].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[1])))
+					&& instruction[2].matches("[0-9.]+") && (RVs.idTaken(Integer.parseInt(instruction[2])))) {
+						trains.find(Integer.parseInt(instruction[1])).add(RVs.find(Integer.parseInt(instruction[2])));
+					}
+					else {
+						System.out.println("Incorrect Ids provided");
+					}
+					break;
+				case "detach":
+					if(instruction[1].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[1])))
+					&& instruction[2].matches("[0-9.]+") && (RVs.idTaken(Integer.parseInt(instruction[2])))) {
+						trains.find(Integer.parseInt(instruction[1])).remove(RVs.find(Integer.parseInt(instruction[2])));
+					}
+					else {
+						System.out.println("Incorrect Ids provided");
+					}
+					break;
 				case "insert":
 					if (lines.nameExists(instruction[1]) && stations.nameExists(instruction[2])) {
 						lines.find(instruction[1]).addStation(stations.find(instruction[2]),Integer.parseInt(instruction[3]));
@@ -199,6 +222,25 @@ public class TrainsProgram {
 						case "RVs":
 							RVs.printInfoAll();
 							break;
+						case "trains":
+							trains.printIDs();
+							break;
+						case "trainCars":
+							if(instruction[2].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[2])))) {
+								trains.find(Integer.parseInt(instruction[2])).printInfo();
+							}
+							else {
+								System.out.println("Incorrect Id provided");
+							}
+							break;
+						case "trainStats":
+							if(instruction[2].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[2])))) {
+								trains.find(Integer.parseInt(instruction[2])).printStats();
+							}
+							else {
+								System.out.println("Incorrect Id provided");
+							}
+							break;							
 					}
 					break;
 				
@@ -235,6 +277,7 @@ public class TrainsProgram {
 		stations = new StationDatabase();
 		RVmodels = new RailVehicleTemplateDatabase();
 		RVs = new RailVehicleDatabase();
+		trains = new TrainDatabase();
 		Scanner sc=new Scanner(System.in);  
 		String[] instruction;
 		

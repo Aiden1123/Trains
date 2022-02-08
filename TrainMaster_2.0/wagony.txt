@@ -1,0 +1,11 @@
+add template carriage EH1 40 160 22 40
+add template carriage EH2 40 180 22 55
+add template carriage EH3 40 200 22 58
+add template loco Husarz 40 220 18 7000
+add template emu Dart 180 230 160 138 5000
+add carriage EH3
+add carriage EH3
+add carriage EH3
+add carriage EH3
+add carriage EH3
+add loco Husarz

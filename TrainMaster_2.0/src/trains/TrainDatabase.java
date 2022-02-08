@@ -1,5 +1,6 @@
 package trains;
+import idObjects.*;
 
-public class TrainDatabase {
+public class TrainDatabase extends IdObjectDatabase<Train>{
 
 }

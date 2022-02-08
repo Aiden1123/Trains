@@ -6,7 +6,7 @@ public class IdObjectDatabase<T extends IdObject> {
 	
 	protected ArrayList<T> array = new ArrayList<T>();
 	
-	boolean idTaken(int id) {
+	public boolean idTaken(int id) {
 		for(T i: array) {
 			if (i.getId()==id) {
 				return true;
@@ -51,5 +51,10 @@ public class IdObjectDatabase<T extends IdObject> {
 		return array;
 	}
 	
+	public void printIDs() {
+		for(T i:array) {
+			System.out.println(i.getId());
+		}
+	}
 	
 }
