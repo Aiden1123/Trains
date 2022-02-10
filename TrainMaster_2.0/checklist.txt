@@ -7,8 +7,12 @@
 -delete all cars
 -delete all templates
 
--add train to line
--add train from template to line
+-delete stop from line
+-delete stop
+-delete line
+
++add train to line
++add train from template to line
 
 -Connection objects
 -Time calculation

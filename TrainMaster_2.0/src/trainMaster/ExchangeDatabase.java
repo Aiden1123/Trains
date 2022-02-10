@@ -9,6 +9,10 @@ public class ExchangeDatabase  implements Serializable {
 	private static final long serialVersionUID = -4117398988009582087L;
 	ArrayList<Exchange> exchanges;
 	
+	ExchangeDatabase() {
+		exchanges = new ArrayList<Exchange>();
+	}
+	
 	public void add(Exchange exchange) {
 		if (!exchanges.contains(exchange))
 			exchanges.add(exchange);
@@ -22,8 +26,12 @@ public class ExchangeDatabase  implements Serializable {
 				break;
 			}
 		}
-		if (!aux.equals(null))
-		exchanges.remove(aux);
+		if (aux != null)
+				exchanges.remove(aux);
 		}
+
+	public ArrayList<Exchange> getExchanges() {
+		return exchanges;
+	}
 	
 }

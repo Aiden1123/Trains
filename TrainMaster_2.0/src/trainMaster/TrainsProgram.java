@@ -245,11 +245,62 @@ public class TrainsProgram {
 					}
 					break;
 					
+				case "assign":
+					if(lines.nameExists(instruction[1])) {
+						for(int i=2;i<instruction.length;i++) {
+							if (instruction[i].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[i])))) {
+								lines.find(instruction[1]).addTrain(trains.find(Integer.parseInt(instruction[i])));
+							}
+						}
+					}
+					else {
+						System.out.println("Incorrect line name");
+					}
+					break;
+					
+				case "withdraw":
+					if(lines.nameExists(instruction[1])) {
+						for(int i=2;i<instruction.length;i++) {
+							if (instruction[i].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[i])))) {
+								lines.find(instruction[1]).removeTrain(trains.find(Integer.parseInt(instruction[i])));
+							}
+						}
+					}
+					else {
+						System.out.println("Incorrect line name");
+					}
+					break;
+				
+				case "assignTemplate":
+					if(lines.nameExists(instruction[1])) {
+						for(int i=2;i<instruction.length;i++) {
+							if (trainTemplates.nameExists(instruction[i])) {
+								Train train = new Train();
+								for(RailVehicleTemplate carTemplate: trainTemplates.find(instruction[i]).getCars()) {
+									RailVehicle aux = new RailVehicle(carTemplate);
+									RVs.add(aux);
+									train.add(aux);
+								}
+								trains.add(train);
+								lines.find(instruction[1]).addTrain(train);
+							}
+						}
+					}
+					else {
+						System.out.println("Incorrect line name");
+					}
+					break;
+
 				case "print":
 					switch(instruction[1]) {
 						case "line":
 							if (lines.nameExists(instruction[2]))
 								lines.find(instruction[2]).printStations();
+							break;
+							
+						case "lineTrains":
+							if (lines.nameExists(instruction[2]))
+								lines.find(instruction[2]).printTrains();
 							break;
 							
 						case "station":
@@ -338,10 +389,12 @@ public class TrainsProgram {
 					}
 					break;
 					
-				case "load":
-					SaveDatabases load = SaveDatabases.readFromFile(instruction[1]);
-					TrainsProgram.lines = load.getLines();
-					TrainsProgram.stations = load.getStations();
+				case "load": 
+					{	
+						SaveDatabases load = SaveDatabases.readFromFile(instruction[1]);
+						TrainsProgram.lines = load.getLines();
+						TrainsProgram.stations = load.getStations();
+					}
 					break;
 					
 				default:
