@@ -28,4 +28,16 @@ public class CarriageTemplate extends RailVehicleTemplate{
 		train.setLength(train.getLength() - length);
 		train.setCapacity(train.getCapacity() - capacity);
 	}
+	
+	public void incrementTrainStats(TrainTemplate train) {
+		train.setMass(train.getMass() + mass);
+		train.setLength(train.getLength() + length);
+		train.setCapacity(train.getCapacity() + capacity);
+	}
+	
+	public void decrementTrainStats(TrainTemplate train) {
+		train.setMass(train.getMass() - mass);
+		train.setLength(train.getLength() - length);
+		train.setCapacity(train.getCapacity() - capacity);
+	}
 }

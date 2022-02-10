@@ -8,7 +8,7 @@ public class RailVehicle extends IdObject {
 	RailVehicleTemplate model;
 	Train train;
 	
-	RailVehicle(RailVehicleTemplate model) {
+	public RailVehicle(RailVehicleTemplate model) {
 		this.model = model;
 		this.train = null;
 	}

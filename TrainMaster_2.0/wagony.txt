@@ -9,3 +9,5 @@ add carriage EH3
 add carriage EH3
 add carriage EH3
 add loco Husarz
+add template train wariat
+attachModel wariat Husarz EH3 EH3 EH3 EH3

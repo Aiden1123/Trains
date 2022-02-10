@@ -53,10 +53,12 @@ public class Train extends IdObject {
 	}
 	
 	public void remove(RailVehicle car) {
-		car.setTrain(null);
-		cars.remove(car);
-		car.getModel().decrementTrainStats(this);
-		updatemaxSpeed();
+		if (cars.contains(car)) {
+			car.setTrain(null);
+			cars.remove(car);
+			car.getModel().decrementTrainStats(this);
+			updatemaxSpeed();
+		}
 	}
 	
 	public void printStats() {

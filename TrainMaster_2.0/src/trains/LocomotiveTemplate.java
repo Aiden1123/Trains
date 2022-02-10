@@ -25,4 +25,16 @@ public class LocomotiveTemplate extends RailVehicleTemplate {
 		train.setLength(train.getLength() - length);
 		train.setPower(train.getPower() - power);
 	}
+	
+	public void incrementTrainStats(TrainTemplate train) {
+		train.setMass(train.getMass() + mass);
+		train.setLength(train.getLength() + length);
+		train.setPower(train.getPower() + power);
+	}
+	
+	public void decrementTrainStats(TrainTemplate train) {
+		train.setMass(train.getMass() - mass);
+		train.setLength(train.getLength() - length);
+		train.setPower(train.getPower() - power);
+	}
 }

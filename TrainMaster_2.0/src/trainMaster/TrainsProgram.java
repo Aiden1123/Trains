@@ -11,6 +11,7 @@ public class TrainsProgram {
 	static RailVehicleTemplateDatabase RVmodels;
 	static RailVehicleDatabase RVs;
 	static TrainDatabase trains;
+	static TrainTemplateDatabase trainTemplates;
 	
 	public static void executeScript(String filename) {
 	    try {
@@ -120,6 +121,7 @@ public class TrainsProgram {
 																					Integer.parseInt(instruction[7])));
 									break;
 								case "train":
+									trainTemplates.add(new TrainTemplate(instruction[3]));
 									break;
 							}
 							break;
@@ -149,25 +151,84 @@ public class TrainsProgram {
 
 					}
 					break;
-					
+
 				case "attach":
-					if(instruction[1].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[1])))
-					&& instruction[2].matches("[0-9.]+") && (RVs.idTaken(Integer.parseInt(instruction[2])))) {
-						trains.find(Integer.parseInt(instruction[1])).add(RVs.find(Integer.parseInt(instruction[2])));
+					if(instruction[1].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[1])))) {
+						for(int i=2;i<instruction.length;i++) 
+							if (instruction[i].matches("[0-9.]+") && (RVs.idTaken(Integer.parseInt(instruction[i])))) {
+								trains.find(Integer.parseInt(instruction[1])).add(RVs.find(Integer.parseInt(instruction[i])));
+							}
+							else if (RVmodels.nameExists(instruction[i])) {
+								RailVehicle aux = new RailVehicle(RVmodels.find(instruction[i]));
+								RVs.add(aux);
+								trains.find(Integer.parseInt(instruction[1])).add(aux);
+							}
 					}
 					else {
 						System.out.println("Incorrect Ids provided");
 					}
 					break;
+				
 				case "detach":
-					if(instruction[1].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[1])))
-					&& instruction[2].matches("[0-9.]+") && (RVs.idTaken(Integer.parseInt(instruction[2])))) {
-						trains.find(Integer.parseInt(instruction[1])).remove(RVs.find(Integer.parseInt(instruction[2])));
+					if(instruction[1].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[1])))) {
+						for(int i=2;i<instruction.length;i++) 
+							if (instruction[i].matches("[0-9.]+") && (RVs.idTaken(Integer.parseInt(instruction[i])))) {
+								trains.find(Integer.parseInt(instruction[1])).remove(RVs.find(Integer.parseInt(instruction[i])));
+							}
 					}
 					else {
 						System.out.println("Incorrect Ids provided");
 					}
 					break;
+					
+				case "attachModel":
+					if(trainTemplates.nameExists(instruction[1])) {
+						for(int i=2;i<instruction.length;i++) 
+							if (RVmodels.nameExists(instruction[i])) {
+								trainTemplates.find(instruction[1]).add(RVmodels.find(instruction[i]));
+							}
+					}
+					else {
+						System.out.println("Incorrect name provided");
+					}
+					break;
+				
+				case "detachModel":
+					if(trainTemplates.nameExists(instruction[1])) {
+						for(int i=2;i<instruction.length;i++) 
+							if (RVmodels.nameExists(instruction[i])) {
+								trainTemplates.find(instruction[1]).remove(RVmodels.find(instruction[i]));
+							}
+					}
+					else {
+						System.out.println("Incorrect name provided");
+					}
+					break;
+				
+				case "attachTemplate":
+					if(instruction[1].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[1])))) {
+						if(trainTemplates.nameExists(instruction[2])) {
+							for(RailVehicleTemplate carTemplate: trainTemplates.find(instruction[2]).getCars()) {
+								RailVehicle aux = new RailVehicle(carTemplate);
+								RVs.add(aux);
+								trains.find(Integer.parseInt(instruction[1])).add(aux);
+							}
+						}
+					}
+					break;
+					
+				case "BuildTemplate":
+					if(trainTemplates.nameExists(instruction[1])) {
+						Train train = new Train();
+						for(RailVehicleTemplate carTemplate: trainTemplates.find(instruction[1]).getCars()) {
+							RailVehicle aux = new RailVehicle(carTemplate);
+							RVs.add(aux);
+							train.add(aux);
+						}
+						trains.add(train);
+					}
+					break;
+					
 				case "insert":
 					if (lines.nameExists(instruction[1]) && stations.nameExists(instruction[2])) {
 						lines.find(instruction[1]).addStation(stations.find(instruction[2]),Integer.parseInt(instruction[3]));
@@ -187,11 +248,13 @@ public class TrainsProgram {
 				case "print":
 					switch(instruction[1]) {
 						case "line":
-							lines.find(instruction[2]).printStations();
+							if (lines.nameExists(instruction[2]))
+								lines.find(instruction[2]).printStations();
 							break;
 							
 						case "station":
-							stations.find(instruction[2]).printLines();
+							if (stations.nameExists(instruction[2]))
+								stations.find(instruction[2]).printLines();
 							break;
 					
 						case "lines":
@@ -213,18 +276,23 @@ public class TrainsProgram {
 						case "linesExchanges":
 							lines.printNamesExchanges();
 							break;
+						
 						case "RVmodels":
 							RVmodels.printInfoAll();
 							break;
+						
 						case "RVnames":
 							RVmodels.printNames();
 							break;
+						
 						case "RVs":
 							RVs.printInfoAll();
 							break;
+						
 						case "trains":
 							trains.printIDs();
 							break;
+						
 						case "trainCars":
 							if(instruction[2].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[2])))) {
 								trains.find(Integer.parseInt(instruction[2])).printInfo();
@@ -233,6 +301,7 @@ public class TrainsProgram {
 								System.out.println("Incorrect Id provided");
 							}
 							break;
+						
 						case "trainStats":
 							if(instruction[2].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[2])))) {
 								trains.find(Integer.parseInt(instruction[2])).printStats();
@@ -240,7 +309,22 @@ public class TrainsProgram {
 							else {
 								System.out.println("Incorrect Id provided");
 							}
-							break;							
+							break;
+						
+						case "templateStats":
+							if (trainTemplates.nameExists(instruction[2]))
+								trainTemplates.find(instruction[2]).printStats();
+							break;
+						
+						case "templateCars":
+							if (trainTemplates.nameExists(instruction[2]))
+								trainTemplates.find(instruction[2]).printInfo();
+							break;
+							
+						case "templates":
+							trainTemplates.printNames();
+							break;
+					
 					}
 					break;
 				
@@ -278,6 +362,7 @@ public class TrainsProgram {
 		RVmodels = new RailVehicleTemplateDatabase();
 		RVs = new RailVehicleDatabase();
 		trains = new TrainDatabase();
+		trainTemplates = new TrainTemplateDatabase();
 		Scanner sc=new Scanner(System.in);  
 		String[] instruction;
 		

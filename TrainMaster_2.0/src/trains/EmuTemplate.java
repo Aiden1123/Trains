@@ -35,4 +35,18 @@ public class EmuTemplate extends RailVehicleTemplate {
 		train.setCapacity(train.getCapacity() - capacity);
 		train.setPower(train.getPower() - power);
 	}
+	
+	public void incrementTrainStats(TrainTemplate train) {
+		train.setMass(train.getMass() + mass);
+		train.setLength(train.getLength() + length);
+		train.setCapacity(train.getCapacity() + capacity);
+		train.setPower(train.getPower() + power);
+	}
+	
+	public void decrementTrainStats(TrainTemplate train) {
+		train.setMass(train.getMass() - mass);
+		train.setLength(train.getLength() - length);
+		train.setCapacity(train.getCapacity() - capacity);
+		train.setPower(train.getPower() - power);
+	}
 }

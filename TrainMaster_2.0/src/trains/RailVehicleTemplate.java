@@ -11,6 +11,9 @@ abstract public class RailVehicleTemplate extends NamedObject{
 	abstract public void printInfo();
 	abstract public void incrementTrainStats(Train train);
 	abstract public void decrementTrainStats(Train train);
+	abstract public void incrementTrainStats(TrainTemplate train);
+	abstract public void decrementTrainStats(TrainTemplate train);
+	
 	
 	RailVehicleTemplate(String name, int mass, int maxSpeed, int length) {
 		super(name);
