@@ -14,7 +14,14 @@ public class Station extends NamedObject{
 		this.lines = new ArrayList<TrainLine>();
 	}
 	
-	public void addLine(TrainLine line) {
+	public void addLine(TrainLine line, int distance) {
+		
+		if (line.getStations().size() > 1) {
+			Station prev = line.getStations().get(line.getStations().size() - 2);
+			prev.getConnections().add(new Connection(this,line,distance));
+			connections.add(new Connection(prev,line,distance));
+		}
+		
 		if (!(lines.contains(line))) {
 			lines.add(line);
 			for(TrainLine stationLine: lines) {
@@ -28,6 +35,7 @@ public class Station extends NamedObject{
 	}
 	
 	public void deleteLine(TrainLine line) {		//Removes line ONLY IF it doesn't go through the station !!!
+		//note: Figure out connection stuff
 		if (!(line.getStations().contains(this)))
 			lines.remove(line);
 	}
@@ -42,6 +50,12 @@ public class Station extends NamedObject{
 		for(TrainLine i: lines) {
 			System.out.print(message);
 			System.out.println(i.getName());
+		}
+	}
+	
+	public void printConnections() {
+		for(Connection i: connections) {
+			i.printInfo();;
 		}
 	}
 

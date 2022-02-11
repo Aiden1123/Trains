@@ -137,16 +137,18 @@ public class TrainsProgram {
 						break;
 					}
 					
-					for(int i=2;i<instruction.length;i++) {
+					for(int i=2;i<instruction.length;i+=2) {
 					
-						if (stations.nameExists(instruction[i])) {
-							lines.find(instruction[1]).addStation(stations.find(instruction[i]));
+						if (stations.nameExists(instruction[i]) && instruction[i+1].matches("[0-9.]+")) {
+							lines.find(instruction[1]).addStation(stations.find(instruction[i]), Integer.parseInt(instruction[i+1]));
 						}
 						
 						else {
-							Station aux = new Station(instruction[i]); 
-							stations.add(aux);
-							lines.find(instruction[1]).addStation(aux);
+							if (instruction[i+1].matches("[0-9.]+")) {
+								Station aux = new Station(instruction[i]); 
+								stations.add(aux);
+								lines.find(instruction[1]).addStation(aux, Integer.parseInt(instruction[i+1]));
+							}
 						}
 
 					}
@@ -217,7 +219,7 @@ public class TrainsProgram {
 					}
 					break;
 					
-				case "BuildTemplate":
+				case "buildTemplate":
 					if(trainTemplates.nameExists(instruction[1])) {
 						Train train = new Train();
 						for(RailVehicleTemplate carTemplate: trainTemplates.find(instruction[1]).getCars()) {
@@ -307,12 +309,17 @@ public class TrainsProgram {
 							if (stations.nameExists(instruction[2]))
 								stations.find(instruction[2]).printLines();
 							break;
-					
+
+						case "stationConnections":
+							if (stations.nameExists(instruction[2]))
+								stations.find(instruction[2]).printConnections();
+							break;
+							
 						case "lines":
 							lines.printNames();
 							break;
 						
-						case "linesinfo":
+						case "linesInfo":
 							lines.printNamesStations();
 							break;
 							
@@ -320,7 +327,7 @@ public class TrainsProgram {
 							stations.printNames();
 							break;
 						
-						case "stationsinfo":
+						case "stationsInfo":
 							stations.printNamesLines();
 							break;
 						

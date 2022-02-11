@@ -38,13 +38,15 @@ public class TrainLine extends NamedObject {
 		}
 	}
 	
-	public void addStation(Station station) {
+	public void addStation(Station station, int distance) {
 		this.stations.add(station);
-		station.addLine(this);
+		station.addLine(this,distance);
 	}
 	
-	public void addStation(Station station, int index) {
+	public void addStation(Station station, int distance_a, int index, int distance_b) {
+		//Todo: make this work
 		
+		/*
 		try {
 			this.stations.add(index,station);
 		} 
@@ -53,6 +55,7 @@ public class TrainLine extends NamedObject {
 		}
 		
 		station.addLine(this);
+		*/
 	}
 	
 	public void deleteStation(Station station) {

@@ -1,4 +1,4 @@
 add line Eastbound Westbound Northbound
-append Eastbound Central Mill Outskirts Bushes Plains
-append Westbound Central Commercial Industrial Depot Terminus
-append Northbound Mall Bridge Central Museum Forest Factory Countryside
+append Eastbound Central 0 Mill 2000 Outskirts 1200 Bushes 3400 Plains 4000
+append Westbound Central 0 Commercial 1400 Industrial 3200 Depot 4000 Terminus 5000
+append Northbound Mall 0 Bridge 3500 Central 3450 Museum 2000 Forest 4000 Factory 3000 Countryside 5800 
