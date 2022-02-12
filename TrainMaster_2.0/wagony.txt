@@ -3,6 +3,7 @@ add template carriage EH2 40 180 22 55
 add template carriage EH3 40 200 22 58
 add template loco Husarz 40 220 18 7000
 add template emu Dart 180 230 160 138 5000
+add template emu pendolino 400 200 187 402 5500
 add carriage EH3
 add carriage EH3
 add carriage EH3
@@ -10,4 +11,8 @@ add carriage EH3
 add carriage EH3
 add loco Husarz
 add template train wariat
-attachModel wariat Husarz EH3 EH3 EH3 EH3
+attachModel wariat Husarz EH3 EH3 EH3 EH3 EH3 EH3 EH3 EH3 EH3
+add template train pendolino
+attachModel pendolino pendolino
+buildTemplate pendolino
+print trains

@@ -293,6 +293,16 @@ public class TrainsProgram {
 					}
 					break;
 
+				case "test":
+					if (instruction[1].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[1])))) {
+						Train train = trains.find(Integer.parseInt(instruction[1]));
+						int testDistances[] = {1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 250000};
+						for(int distance : testDistances) {
+							System.out.println(Integer.toString(distance) + ": " + Long.toString(RouteFinder.CalculateTime(train,distance)));
+						}
+					}
+					break;
+					
 				case "print":
 					switch(instruction[1]) {
 						case "line":

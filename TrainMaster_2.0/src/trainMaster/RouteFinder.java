@@ -1,8 +1,103 @@
 package trainMaster;
 
 import java.util.ArrayList;
+import java.lang.Math;
+import trains.*;
 
 public class RouteFinder {
+	
+	
+	
+	private static long SmallDistance(Train train, long time) {
+		
+		double F = 1.0;
+		int P = train.getPower() * 1000;
+		double a = 0.986;
+		int m = train.getMass() * 1000;
+		
+		return (long) ((P*P)/(8*F*F*m*m*a*a*a) - (Math.sqrt((8*P)/(F*m*9))) * Math.pow(P/(2*F*m*a*a), 1.5) - ((P*P)/(2*F*m*a*a))/(2*F*m*a)
+									   + (Math.sqrt((8*P)/(F*m*9))) * Math.pow(time, 1.5) - (P*time)/(2*F*m*a)
+									   + Math.pow(SpeedStage2(train,time), 2)/(2*a));
+	}
+	
+	private static double SpeedStage2(Train train, long time) {
+		
+		double F = 1.0;
+		int P = train.getPower() * 1000;
+		double a = 0.986;
+		int m = train.getMass() * 1000;
+		
+		return Math.sqrt((2*time*P)/(F*m)) - P/(2*F*m*a);
+	
+	}
+	
+	public static long CalculateTime(Train train, int distance) {
+		
+		double F = 1.0;
+		double Vmax = train.getmaxSpeed() * (5.0/18);
+		long P = train.getPower() * 1000;
+		double a = 0.986;
+		long m = train.getMass() * 1000;
+		
+		if (P==0) {
+			System.out.println("Engine not detected!");
+		}
+		
+		//Step 1 check if distance allows to reach max speed
+		double t = (F*m*Vmax*Vmax)/(2*P) + Vmax/(2*a) + (P)/(8*F*m*a*a);
+		double t0 = P/(2*F*m*a*a);
+		
+		//System.out.println(t);
+		//System.out.println(t0);
+		
+		//System.out.println((P*P)/(8*F*F*m*m*a*a*a) + (Vmax*Vmax)/(2*a) + (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t, 1.5) - (P*t)/(2*F*m*a)
+		//		- (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t0, 1.5) + (P*t0)/(2*F*m*a));
+		
+		if (distance >= (P*P)/(8*F*F*m*m*a*a*a) + (Vmax*Vmax)/(2*a) + (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t, 1.5) - (P*t)/(2*F*m*a)
+																	- (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t0, 1.5) + (P*t0)/(2*F*m*a)) {
+			
+			System.out.println("case a");
+			
+			distance -= (P*P)/(8*F*F*m*m*a*a*a) + (Vmax*Vmax)/(2*a) + (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t, 1.5) - (P*t)/(2*F*m*a)
+																	- (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t0, 1.5) + (P*t0)/(2*F*m*a);
+			/*
+			System.out.println(t);
+			System.out.println(t0);
+			System.out.println(distance);
+			System.out.println(Vmax);
+			System.out.println(distance/Vmax);
+			System.out.println(Vmax/a);
+			*/
+			
+			return (long) (t0 + t + distance/Vmax + Vmax/a);
+		}
+		
+		else {
+			
+			System.out.println("case b");
+			
+			long time;
+			
+			time = (long)  (((distance - (2*P*P)/(8 * Math.pow(F*m*a, 2) * a)) * 2 * F * m * a * a)/
+				(Math.sqrt(2*P*F*m)*a*a*(4/3) + P*a - Math.sqrt((2*P*P*P)/F*m)));
+			
+			if (SmallDistance(train,time) > distance) {
+				while (SmallDistance(train,time) > distance) {
+					time--;
+				}
+				return time;
+			}
+			else {
+				while (SmallDistance(train,time) < distance) {
+					time++;
+				}
+				return time-1;
+			}
+		}
+		
+	}
+	
+	
 	public static void FewestExchanges(Station start, Station dest) {
 
 		if(start.equals(dest)) {
