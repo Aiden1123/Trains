@@ -15,5 +15,6 @@
 +add train from template to line
 
 +Connection objects
--Time calculation
++Time calculation
 -Finding route by lowest time
+-nice presentation

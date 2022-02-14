@@ -1,18 +1,18 @@
 package trainMaster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.lang.Math;
 import trains.*;
 
 public class RouteFinder {
 	
-	
+	static double a = 0.5;
 	
 	private static long SmallDistance(Train train, long time) {
 		
 		double F = 1.0;
 		int P = train.getPower() * 1000;
-		double a = 0.986;
 		int m = train.getMass() * 1000;
 		
 		return (long) ((P*P)/(8*F*F*m*m*a*a*a) - (Math.sqrt((8*P)/(F*m*9))) * Math.pow(P/(2*F*m*a*a), 1.5) - ((P*P)/(2*F*m*a*a))/(2*F*m*a)
@@ -24,7 +24,6 @@ public class RouteFinder {
 		
 		double F = 1.0;
 		int P = train.getPower() * 1000;
-		double a = 0.986;
 		int m = train.getMass() * 1000;
 		
 		return Math.sqrt((2*time*P)/(F*m)) - P/(2*F*m*a);
@@ -36,7 +35,6 @@ public class RouteFinder {
 		double F = 1.0;
 		double Vmax = train.getmaxSpeed() * (5.0/18);
 		long P = train.getPower() * 1000;
-		double a = 0.986;
 		long m = train.getMass() * 1000;
 		
 		if (P==0) {
@@ -93,6 +91,102 @@ public class RouteFinder {
 				}
 				return time-1;
 			}
+		}
+		
+	}
+	
+	public static void LowestDistance(Station start, Station dest) {
+
+		if(start.equals(dest)) {
+			System.out.println("Start and destination is the same");
+			return;
+		}
+		
+		ArrayList<Connection> res = new ArrayList<Connection>();
+		
+		ArrayList<Connection> stack = new ArrayList<Connection>();
+		ArrayList<Integer> prev = new ArrayList<Integer>();
+		ArrayList<Integer> distance = new ArrayList<Integer>();
+		
+		HashMap<Station, Integer> stationDistances = new HashMap<Station, Integer>(30);
+		
+		int currDistance = 40000000;
+		Station currStation = start;
+		Station prevStation;
+		Connection prevConn;
+		int i=0;
+		
+		stationDistances.put(start, 0);
+		
+		for(Connection connection: start.getConnections()) {
+			
+			if (connection.getDistance() < currDistance) {
+			
+				if (connection.getStation().equals(dest)) {
+					res.add(connection);
+					currDistance = connection.getDistance();
+					continue;
+				}
+				
+				if (stationDistances.containsKey(connection.getStation()) && stationDistances.get(connection.getStation()) <=  connection.getDistance()) {
+					continue;
+				}
+			
+				stack.add(connection);
+				prev.add(-1);
+				distance.add(connection.getDistance());
+				stationDistances.put(connection.getStation(), connection.getDistance());
+			}
+		}
+		
+
+		
+		while(i < stack.size()) {
+
+			prevConn = stack.get(i);
+			currStation = prevConn.getStation();
+			prevStation = prev.get(i) >= 0 ? stack.get(prev.get(i)).getStation() : start;
+			
+			for(Connection connection: currStation.getConnections()) {
+				
+				/*
+				if (connection.getStation().equals(prevStation)) {
+					continue;
+				}
+				*/
+				
+				if (connection.getDistance() + distance.get(i) < currDistance) {
+				
+					if (connection.getStation().equals(dest)) {
+						res.clear();
+						res.add(connection);
+						
+						for(int j=i;j>=0;j=prev.get(j)) {
+							res.add(0,stack.get(j));
+						}
+						
+						currDistance = connection.getDistance();
+						continue;
+					}
+					
+					if (stationDistances.containsKey(connection.getStation()) && stationDistances.get(connection.getStation()) <=  connection.getDistance() + distance.get(i)) {
+						continue;
+					}
+
+					stack.add(connection);
+					prev.add(i);
+					distance.add(connection.getDistance() + distance.get(i));
+					stationDistances.put(connection.getStation(),connection.getDistance() + distance.get(i));
+				
+				}
+			}
+			
+			i++;
+		}
+		
+		System.out.println("Start at " + start.getName());
+		for(Connection connection: res) {
+			System.out.println(connection.getLine().getName() + "\t" + connection.getStation().getName());
 		}
 		
 	}

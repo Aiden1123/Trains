@@ -22,5 +22,8 @@ public class Connection {
 	public TrainLine getLine() {
 		return line;
 	}
+	public int getDistance() {
+		return distance;
+	}
 	
 }

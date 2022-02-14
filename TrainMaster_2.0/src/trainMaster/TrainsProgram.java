@@ -45,6 +45,12 @@ public class TrainsProgram {
 					}
 					break;
 				
+				case "fastRoute":
+					if (!(stations.find(instruction[1]) == null) && !(stations.find(instruction[2]) == null)) {
+						RouteFinder.LowestDistance(stations.find(instruction[1]), stations.find(instruction[2]));
+					}
+					break;
+					
 				case "add": 
 					switch(instruction[1]) {
 						case "line":
@@ -438,13 +444,7 @@ public class TrainsProgram {
 		
 		System.out.println("TrainMaster 2.0");
 		
-		while(true) {
-			instruction = sc.nextLine().split(" ");
-		
-			if(instruction[0].equals("quit")) {
-				break;
-			}
-			
+		while(!((instruction = sc.nextLine().split(" "))[0].equals("quit"))) {
 			menu(instruction);
 		}
 	
