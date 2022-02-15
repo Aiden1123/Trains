@@ -39,13 +39,13 @@ public class TrainsProgram {
 					executeScript(instruction[1]);
 					break;
 					
-				case "route":
+				case "routeC":
 					if (!(stations.find(instruction[1]) == null) && !(stations.find(instruction[2]) == null)) {
-						RouteFinder.FewestExchangesStops(stations.find(instruction[1]), stations.find(instruction[2]));
+						RouteFinder.FewestExchangesPretty(stations.find(instruction[1]), stations.find(instruction[2]));
 					}
 					break;
 				
-				case "fastRoute":
+				case "route":
 					if (!(stations.find(instruction[1]) == null) && !(stations.find(instruction[2]) == null)) {
 						RouteFinder.LowestDistance(stations.find(instruction[1]), stations.find(instruction[2]));
 					}

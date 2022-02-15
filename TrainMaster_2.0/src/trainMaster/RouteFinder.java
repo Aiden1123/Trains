@@ -95,11 +95,86 @@ public class RouteFinder {
 		
 	}
 	
+	private static void PrintStation(Station name) {
+		int size = name.getName().length();
+		int horizontal_gap = 1;
+		int vertical_gap = 0;
+		
+		for(int i=0;i<size + horizontal_gap*2 + 2;i++) {
+			System.out.print("-");
+		}
+		
+		System.out.println();
+		
+		for(int i=0;i<vertical_gap;i++) {
+			System.out.print("|");
+		
+			for(int j=0;j<size + horizontal_gap*2; j++) {
+				System.out.print(" ");
+			}
+			
+			System.out.println("|");
+		}
+		
+		System.out.print("|");
+		
+		for(int i=0;i<horizontal_gap;i++) {
+			System.out.print(" ");
+		}
+		
+		System.out.print(name.getName());
+		
+		for(int i=0;i<horizontal_gap;i++) {
+			System.out.print(" ");
+		}
+		
+		System.out.println("|");
+		
+		for(int i=0;i<vertical_gap;i++) {
+			System.out.print("|");
+		
+			for(int j=0;j<size + horizontal_gap*2; j++) {
+				System.out.print(" ");
+			}
+			
+			System.out.println("|");
+		}
+		
+		for(int i=0;i<size + horizontal_gap*2 + 2;i++) {
+			System.out.print("-");
+		}
+		System.out.println();
+		
+	}
+	
+	private static void PrintConnection(TrainLine line, Station direction, int stops, int time) {
+		
+		int vertical_gap = 1;
+		
+		for(int i=0;i<vertical_gap;i++) {
+			System.out.println("  |");
+		}
+		
+		System.out.println("  | " + line.getName() + " to: " + direction.getName());
+		System.out.println("  | Travel " + Integer.toString(stops) + (stops > 1 ? " stops" : " stop"));
+		
+		if (time > 0) {
+			System.out.printf("  | ET: %02d:%02d:%02d",time/3600,(time%3600)/60,time%60);
+			System.out.println();
+		}
+		
+		for(int i=0;i<vertical_gap;i++) {
+			System.out.println("  |");
+		}
+		
+	}
+	
 	private static void PrintRoute(Station start,ArrayList<Connection> route) {
 		
 		route = EliminateUsellesExchanges(route);
 		
-		System.out.println("Start at: " + start.getName());
+		PrintStation(start);
+		
 		Train train;
 		int i=0;
 		int totalTime;
@@ -107,7 +182,6 @@ public class RouteFinder {
 		int time;
 		while(i<route.size()) {
 		
-			System.out.println("Board " + route.get(i).getLine().getName() + " heading to " + route.get(i).getStation().getName());
 			stopCountStart = i;
 			train = route.get(i).getLine().getTrain();
 			if (train != null) {
@@ -123,9 +197,8 @@ public class RouteFinder {
 					time += (int) CalculateTime(train,route.get(i).getDistance());
 				}
 			}
-			System.out.printf("Travel %d stops\n",i-stopCountStart+1);
-			System.out.printf("ET: %02d:%02d:%02d\n",time/3600,time/60,time%60);
-			System.out.println("Get off at: " + route.get(i).getStation().getName());
+			PrintConnection(route.get(stopCountStart).getLine(),route.get(stopCountStart).getStation(),i-stopCountStart+1,time);
+			PrintStation(route.get(i).getStation());
 			i++;
 		}
 	}
@@ -150,7 +223,12 @@ public class RouteFinder {
 			return;
 		}
 		
-		ArrayList<Connection> res = new ArrayList<Connection>();
+		ArrayList<Connection> res = FewestExchangesSilent(start,dest);
+		
+		if (res.isEmpty()) {
+			System.out.println("Connection has not been found");
+			return;
+		}
 		
 		ArrayList<Connection> stack = new ArrayList<Connection>();
 		ArrayList<Integer> prev = new ArrayList<Integer>();
@@ -158,7 +236,12 @@ public class RouteFinder {
 		
 		HashMap<Station, Integer> stationDistances = new HashMap<Station, Integer>(30);
 		
-		int currDistance = 40000000;
+		int currDistance = 0;
+		
+		for(Connection connection : res) {
+			currDistance += connection.getDistance();
+		}
+		
 		Station currStation = start;
 		Connection prevConn;
 		int i=0;
@@ -225,17 +308,233 @@ public class RouteFinder {
 		}
 		
 		
-		/*
-		System.out.println("Start at " + start.getName());
-		for(Connection connection: res) {
-			System.out.println(connection.getLine().getName() + "\t" + connection.getStation().getName());
-		}
-		*/
-		
 		PrintRoute(start,res);
 		
 	}
 	
+	public static void FewestExchangesPretty(Station start, Station dest) {
+
+		ArrayList<Connection> res = new ArrayList<Connection>();
+		
+		if(start.equals(dest)) {
+			System.out.println("Start and destination is the same");
+			return;
+		}
+		
+	
+		ArrayList<TrainLine> lines = new ArrayList<TrainLine>();
+		ArrayList<TrainLine> prev_line = new ArrayList<TrainLine>();
+		
+		
+		for(TrainLine i: start.getLines()) {
+			lines.add(i);
+			prev_line.add(null);
+		}
+		
+		int i=0;
+		
+		while(i<lines.size()) {
+			
+			if (lines.get(i).getStations().contains(dest)) {
+
+				TrainLine previousLine = prev_line.get(i);
+				TrainLine nextLine = lines.get(i);
+				Station transfer;
+				Station currentTarget = dest;
+				
+				while(!(previousLine == null)) {
+		
+					transfer = null;
+					
+					for(Exchange j: previousLine.getExchanges()) {
+						if (j.getLine().equals(nextLine)) {
+							transfer = j.getStation();
+							break;
+						}
+					}
+		
+					if (transfer == null) {
+						System.out.println("An error has occured");
+						return;
+					}
+					
+					if (nextLine.getStations().indexOf(transfer) < nextLine.getStations().indexOf(currentTarget)) {
+						for(int j = nextLine.getStations().indexOf(transfer);j<nextLine.getStations().indexOf(currentTarget);j++) {
+							for(Connection connection: nextLine.getStations().get(j).getConnections()) {
+								if (connection.getLine().equals(nextLine) && connection.getStation().equals(nextLine.getStations().get(j+1))) {
+									res.add(j - nextLine.getStations().indexOf(transfer), connection);
+									break;
+								}
+							}
+						}
+					}
+					else {
+						for(int j = nextLine.getStations().indexOf(transfer);j>nextLine.getStations().indexOf(currentTarget);j--) {
+							for(Connection connection: nextLine.getStations().get(j).getConnections()) {
+								if (connection.getLine().equals(nextLine) && connection.getStation().equals(nextLine.getStations().get(j-1))) {
+									res.add(nextLine.getStations().indexOf(transfer) - j, connection);
+									break;
+								}
+							}
+						}						
+					}
+					
+					currentTarget = transfer;
+					nextLine = previousLine;
+					previousLine = prev_line.get(lines.indexOf(nextLine));
+				}
+				
+				if (nextLine.getStations().indexOf(start) < nextLine.getStations().indexOf(currentTarget)) {
+					for(int j = nextLine.getStations().indexOf(start);j<nextLine.getStations().indexOf(currentTarget);j++) {
+						for(Connection connection: nextLine.getStations().get(j).getConnections()) {
+							if (connection.getLine().equals(nextLine) && connection.getStation().equals(nextLine.getStations().get(j+1))) {
+								res.add(j - nextLine.getStations().indexOf(start), connection);
+								break;
+							}
+						}
+					}
+				}
+				else {
+					for(int j = nextLine.getStations().indexOf(start);j>nextLine.getStations().indexOf(currentTarget);j--) {
+						for(Connection connection: nextLine.getStations().get(j).getConnections()) {
+							if (connection.getLine().equals(nextLine) && connection.getStation().equals(nextLine.getStations().get(j-1))) {
+								res.add(nextLine.getStations().indexOf(start) - j, connection);
+								break;
+							}
+						}
+					}						
+				}				
+				
+				PrintRoute(start,res);
+				return;
+			}
+			
+			else {
+				for(Exchange j: lines.get(i).getExchanges()) {
+					if (!lines.contains(j.getLine())) {
+						lines.add(j.getLine());
+						prev_line.add(lines.get(i));
+					}
+				}
+			}
+			i++;
+		}
+		
+		System.out.println("Route has not been found");
+		return;
+		
+	}
+	
+	private static ArrayList<Connection> FewestExchangesSilent(Station start, Station dest) {
+
+		ArrayList<Connection> res = new ArrayList<Connection>();
+		
+		if(start.equals(dest)) {
+			return res;
+		}
+		
+	
+		ArrayList<TrainLine> lines = new ArrayList<TrainLine>();
+		ArrayList<TrainLine> prev_line = new ArrayList<TrainLine>();
+		
+		
+		for(TrainLine i: start.getLines()) {
+			lines.add(i);
+			prev_line.add(null);
+		}
+		
+		int i=0;
+		
+		while(i<lines.size()) {
+			
+			if (lines.get(i).getStations().contains(dest)) {
+
+				TrainLine previousLine = prev_line.get(i);
+				TrainLine nextLine = lines.get(i);
+				Station transfer;
+				Station currentTarget = dest;
+				
+				while(!(previousLine == null)) {
+		
+					transfer = null;
+					
+					for(Exchange j: previousLine.getExchanges()) {
+						if (j.getLine().equals(nextLine)) {
+							transfer = j.getStation();
+							break;
+						}
+					}
+		
+					if (transfer == null) {
+						System.out.println("An error has occured");
+						return null;
+					}
+					
+					if (nextLine.getStations().indexOf(transfer) < nextLine.getStations().indexOf(currentTarget)) {
+						for(int j = nextLine.getStations().indexOf(transfer);j<nextLine.getStations().indexOf(currentTarget);j++) {
+							for(Connection connection: nextLine.getStations().get(j).getConnections()) {
+								if (connection.getLine().equals(nextLine) && connection.getStation().equals(nextLine.getStations().get(j+1))) {
+									res.add(j - nextLine.getStations().indexOf(transfer), connection);
+									break;
+								}
+							}
+						}
+					}
+					else {
+						for(int j = nextLine.getStations().indexOf(transfer);j>nextLine.getStations().indexOf(currentTarget);j--) {
+							for(Connection connection: nextLine.getStations().get(j).getConnections()) {
+								if (connection.getLine().equals(nextLine) && connection.getStation().equals(nextLine.getStations().get(j-1))) {
+									res.add(nextLine.getStations().indexOf(transfer) - j, connection);
+									break;
+								}
+							}
+						}						
+					}
+					
+					currentTarget = transfer;
+					nextLine = previousLine;
+					previousLine = prev_line.get(lines.indexOf(nextLine));
+				}
+				
+				if (nextLine.getStations().indexOf(start) < nextLine.getStations().indexOf(currentTarget)) {
+					for(int j = nextLine.getStations().indexOf(start);j<nextLine.getStations().indexOf(currentTarget);j++) {
+						for(Connection connection: nextLine.getStations().get(j).getConnections()) {
+							if (connection.getLine().equals(nextLine) && connection.getStation().equals(nextLine.getStations().get(j+1))) {
+								res.add(j - nextLine.getStations().indexOf(start), connection);
+								break;
+							}
+						}
+					}
+				}
+				else {
+					for(int j = nextLine.getStations().indexOf(start);j>nextLine.getStations().indexOf(currentTarget);j--) {
+						for(Connection connection: nextLine.getStations().get(j).getConnections()) {
+							if (connection.getLine().equals(nextLine) && connection.getStation().equals(nextLine.getStations().get(j-1))) {
+								res.add(nextLine.getStations().indexOf(start) - j, connection);
+								break;
+							}
+						}
+					}						
+				}				
+				
+				return res;
+			}
+			
+			else {
+				for(Exchange j: lines.get(i).getExchanges()) {
+					if (!lines.contains(j.getLine())) {
+						lines.add(j.getLine());
+						prev_line.add(lines.get(i));
+					}
+				}
+			}
+			i++;
+		}
+		
+		return res;
+		
+	}
+
 	
 	public static void FewestExchanges(Station start, Station dest) {
 
