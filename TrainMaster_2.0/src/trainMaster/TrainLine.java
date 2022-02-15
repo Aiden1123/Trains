@@ -101,6 +101,20 @@ public class TrainLine extends NamedObject {
 			System.out.printf("%s%s: %s\n",message,i.getStation().getName(),i.getLine().getName());
 		}
 	}
+	
+	public boolean checkIfStationsAreAdjacent(Station a, Station b) {
+		if ((stations.indexOf(a) - stations.indexOf(b) == 1) || (stations.indexOf(a) - stations.indexOf(b) == -1)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public Train getTrain() {
+		if (trains.size()>0) {
+			return trains.get(0);
+		}
+		return null;
+	}
 
 	public ArrayList<Station> getStations() {
 		return stations;

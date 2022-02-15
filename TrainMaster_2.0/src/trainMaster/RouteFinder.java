@@ -54,7 +54,7 @@ public class RouteFinder {
 		if (distance >= (P*P)/(8*F*F*m*m*a*a*a) + (Vmax*Vmax)/(2*a) + (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t, 1.5) - (P*t)/(2*F*m*a)
 																	- (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t0, 1.5) + (P*t0)/(2*F*m*a)) {
 			
-			System.out.println("case a");
+			//System.out.println("case a");
 			
 			distance -= (P*P)/(8*F*F*m*m*a*a*a) + (Vmax*Vmax)/(2*a) + (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t, 1.5) - (P*t)/(2*F*m*a)
 																	- (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t0, 1.5) + (P*t0)/(2*F*m*a);
@@ -72,7 +72,7 @@ public class RouteFinder {
 		
 		else {
 			
-			System.out.println("case b");
+			//System.out.println("case b");
 			
 			long time;
 			
@@ -95,6 +95,54 @@ public class RouteFinder {
 		
 	}
 	
+	private static void PrintRoute(Station start,ArrayList<Connection> route) {
+		
+		route = EliminateUsellesExchanges(route);
+		
+		System.out.println("Start at: " + start.getName());
+		Train train;
+		int i=0;
+		int totalTime;
+		int stopCountStart;
+		int time;
+		while(i<route.size()) {
+		
+			System.out.println("Board " + route.get(i).getLine().getName() + " heading to " + route.get(i).getStation().getName());
+			stopCountStart = i;
+			train = route.get(i).getLine().getTrain();
+			if (train != null) {
+				time = (int) CalculateTime(train,route.get(i).getDistance());
+			}
+			else {
+				time = -1;
+			}
+			
+			while(i+1<route.size() && route.get(i).getLine().equals(route.get(i+1).getLine()) && route.get(i).getLine().checkIfStationsAreAdjacent(route.get(i).getStation(), route.get(i+1).getStation())) {
+				i++;
+				if (time >= 0) {
+					time += (int) CalculateTime(train,route.get(i).getDistance());
+				}
+			}
+			System.out.printf("Travel %d stops\n",i-stopCountStart+1);
+			System.out.printf("ET: %02d:%02d:%02d\n",time/3600,time/60,time%60);
+			System.out.println("Get off at: " + route.get(i).getStation().getName());
+			i++;
+		}
+	}
+	
+	private static ArrayList<Connection> EliminateUsellesExchanges(ArrayList<Connection> route) {
+		for(int i=1;i<route.size();i++) {
+			if (route.get(i-1).getLine().equals(route.get(i).getLine())) {
+				continue;
+			}
+			if (route.get(i).getStation().getConnections().contains(new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance()))) {
+				route.add(i, new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance()) );
+				route.remove(i+1);
+			}
+		}
+		return route;
+	}
+	
 	public static void LowestDistance(Station start, Station dest) {
 
 		if(start.equals(dest)) {
@@ -112,7 +160,6 @@ public class RouteFinder {
 		
 		int currDistance = 40000000;
 		Station currStation = start;
-		Station prevStation;
 		Connection prevConn;
 		int i=0;
 		
@@ -145,15 +192,8 @@ public class RouteFinder {
 
 			prevConn = stack.get(i);
 			currStation = prevConn.getStation();
-			prevStation = prev.get(i) >= 0 ? stack.get(prev.get(i)).getStation() : start;
 			
 			for(Connection connection: currStation.getConnections()) {
-				
-				/*
-				if (connection.getStation().equals(prevStation)) {
-					continue;
-				}
-				*/
 				
 				if (connection.getDistance() + distance.get(i) < currDistance) {
 				
@@ -184,10 +224,15 @@ public class RouteFinder {
 			i++;
 		}
 		
+		
+		/*
 		System.out.println("Start at " + start.getName());
 		for(Connection connection: res) {
 			System.out.println(connection.getLine().getName() + "\t" + connection.getStation().getName());
 		}
+		*/
+		
+		PrintRoute(start,res);
 		
 	}
 	
