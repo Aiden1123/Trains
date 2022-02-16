@@ -177,9 +177,10 @@ public class RouteFinder {
 		
 		Train train;
 		int i=0;
-		int totalTime;
+		int totalTime=0;
 		int stopCountStart;
 		int time;
+		boolean displayTime = true;
 		while(i<route.size()) {
 		
 			stopCountStart = i;
@@ -189,7 +190,10 @@ public class RouteFinder {
 			}
 			else {
 				time = -1;
+				displayTime = false;
 			}
+			
+			//check if line works
 			
 			while(i+1<route.size() && route.get(i).getLine().equals(route.get(i+1).getLine()) && route.get(i).getLine().checkIfStationsAreAdjacent(route.get(i).getStation(), route.get(i+1).getStation())) {
 				i++;
@@ -197,9 +201,18 @@ public class RouteFinder {
 					time += (int) CalculateTime(train,route.get(i).getDistance());
 				}
 			}
+			
+			if (displayTime) {
+				totalTime += time;
+			}
+			
 			PrintConnection(route.get(stopCountStart).getLine(),route.get(stopCountStart).getStation(),i-stopCountStart+1,time);
 			PrintStation(route.get(i).getStation());
 			i++;
+		}
+		
+		if(displayTime) {
+			System.out.printf("Total travel time: %02d:%02d:%02d",totalTime/3600,(totalTime%3600)/60,totalTime%60);
 		}
 	}
 	
@@ -208,8 +221,8 @@ public class RouteFinder {
 			if (route.get(i-1).getLine().equals(route.get(i).getLine())) {
 				continue;
 			}
-			if (route.get(i).getStation().getConnections().contains(new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance()))) {
-				route.add(i, new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance()) );
+			if (route.get(i).getStation().getConnections().contains(new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance(),route.get(i-1).getStationIndex()+1)) || route.get(i).getStation().getConnections().contains(new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance(),route.get(i-1).getStationIndex()-1))) {
+				route.add(i, new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance(),-1) );
 				route.remove(i+1);
 			}
 		}

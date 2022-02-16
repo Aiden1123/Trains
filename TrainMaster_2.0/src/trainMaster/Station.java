@@ -18,8 +18,8 @@ public class Station extends NamedObject{
 		
 		if (line.getStations().size() > 1) {
 			Station prev = line.getStations().get(line.getStations().size() - 2);
-			prev.getConnections().add(new Connection(this,line,distance));
-			connections.add(new Connection(prev,line,distance));
+			prev.getConnections().add(new Connection(this,line,distance,line.getStations().size() - 2));
+			connections.add(new Connection(prev,line,distance,line.getStations().size() - 1));
 		}
 		
 		if (!(lines.contains(line))) {
@@ -32,6 +32,19 @@ public class Station extends NamedObject{
 				stationLine.getExchanges().add(new Exchange(this,line));
 			}
 		}
+	}
+	
+	public void addLineWithoutConnection(TrainLine line) {
+		if (!(lines.contains(line))) {
+			lines.add(line);
+			for(TrainLine stationLine: lines) {
+				if (stationLine.equals(line)) {
+					continue;
+				}
+				line.getExchanges().add(new Exchange(this,stationLine));
+				stationLine.getExchanges().add(new Exchange(this,line));
+			}
+		}		
 	}
 	
 	public void deleteLine(TrainLine line) {		//Removes line ONLY IF it doesn't go through the station !!!

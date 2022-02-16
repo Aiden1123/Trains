@@ -43,19 +43,49 @@ public class TrainLine extends NamedObject {
 		station.addLine(this,distance);
 	}
 	
-	public void addStation(Station station, int distance_a, int index, int distance_b) {
-		//Todo: make this work
+	public void addStation(Station station, int index, int distance_a, int distance_b) {
+
+		if (index == stations.size()) {
+			System.out.println("Invalid index");
+			return;			
+		}
 		
-		/*
 		try {
 			this.stations.add(index,station);
 		} 
 		catch(IndexOutOfBoundsException e) {
-			this.stations.add(station);
+			System.out.println("Invalid index");
+			return;
 		}
 		
-		station.addLine(this);
-		*/
+		for(Connection connection: this.stations.get(index-1).getConnections()) {
+			if (connection.getLine().equals(this) || connection.getStationIndex() == index-1) {
+				this.stations.get(index-1).getConnections().remove(connection);
+			}
+		}
+		
+		for(Connection connection: this.stations.get(index+1).getConnections()) {
+			if (connection.getLine().equals(this) || connection.getStationIndex() == index) {
+				this.stations.get(index-1).getConnections().remove(connection);
+			}
+		}
+		
+		this.stations.get(index-1).getConnections().add(new Connection(this.stations.get(index),this, distance_a, index-1));
+		
+		this.stations.get(index).getConnections().add(new Connection(this.stations.get(index-1),this, distance_a, index));
+		this.stations.get(index).getConnections().add(new Connection(this.stations.get(index+1),this, distance_b, index));
+		
+		this.stations.get(index+1).getConnections().add(new Connection(this.stations.get(index),this, distance_b, index+1));
+		
+		station.addLineWithoutConnection(this);
+		
+		for(int i = index+1;i < stations.size();i++) {
+			for(Connection connection: stations.get(i).getConnections()) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == i-1) {
+					connection.setStationIndex(connection.getStationIndex()+1);
+				}
+			}
+		}
 	}
 	
 	public void deleteStation(Station station) {
@@ -124,4 +154,8 @@ public class TrainLine extends NamedObject {
 		return exchanges.getExchanges();
 	}
 
+	public ArrayList<Train> getTrains() {
+		return this.trains;
+	}
+	
 }

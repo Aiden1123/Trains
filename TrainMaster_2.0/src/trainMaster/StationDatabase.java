@@ -12,4 +12,8 @@ public class StationDatabase extends UniqueNameDatabase<Station> {
 			i.printLines("\t");
 		}
 	}
+	
+	public void deleteStation(Station station) {
+		
+	}
 }

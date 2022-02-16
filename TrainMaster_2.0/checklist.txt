@@ -11,7 +11,9 @@
 -delete stop
 -delete line
 
--better prints for lines, RVs, trains
+-better prints for everything
+
+-saving and loading
 
 +add train to line
 +add train from template to line
@@ -19,4 +21,5 @@
 +Connection objects
 +Time calculation
 +Finding route by lowest time
--nice presentation
++nice presentation
+-correct printing function
