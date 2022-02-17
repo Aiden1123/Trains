@@ -48,7 +48,6 @@ public class Station extends NamedObject{
 	}
 	
 	public void deleteLine(TrainLine line) {		//Removes line ONLY IF it doesn't go through the station !!!
-		//note: Figure out connection stuff
 		if (!(line.getStations().contains(this)))
 			lines.remove(line);
 	}
@@ -68,7 +67,8 @@ public class Station extends NamedObject{
 	
 	public void printConnections() {
 		for(Connection i: connections) {
-			i.printInfo();;
+			i.printInfo();
+			System.out.println("---------");
 		}
 	}
 

@@ -137,6 +137,60 @@ public class TrainsProgram {
 					}
 					break;
 				
+				case "delete":
+				
+					switch(instruction[1]) {
+						case "train":
+							if (instruction[2].equals("depot")) {
+								trains.removeDepotTrains();
+								break;
+							}
+							if (instruction[2].matches("[0-9.]+") && trains.idTaken(Integer.parseInt(instruction[2]))) {
+								trains.removeTrain(trains.find(Integer.parseInt(instruction[2])));
+								break;
+							}
+							System.out.println("Incorrect instruction on 3rd word");
+							break;
+							
+						case "car":
+							if (instruction[2].equals("depot")) {
+								RVs.deleteDepotRVs();
+								break;
+							}
+							if (instruction[2].matches("[0-9.]+") && RVs.idTaken(Integer.parseInt(instruction[2]))) {
+								RVs.deleteRV(RVs.find(Integer.parseInt(instruction[2])));
+								break;
+							}
+							System.out.println("Incorrect instruction on 3rd word");
+							break;
+							
+						case "trainTemplate":
+							if (trainTemplates.nameExists(instruction[2])) {
+								trainTemplates.delete(trainTemplates.find(instruction[2]));
+							}
+							break;
+							
+						case "carTemplate":
+							if (RVmodels.nameExists(instruction[2])) {
+								RVmodels.delete(RVmodels.find(instruction[2]));
+							}
+							break;
+							
+						case "line":
+							if (lines.nameExists(instruction[2])) {
+								lines.deleteTrainLine(lines.find(instruction[2]));
+							}
+							break;
+							
+						case "station":
+							if (stations.nameExists(instruction[2])) {
+								stations.deleteStation(stations.find(instruction[2]));
+							}
+							break;
+					}
+				
+					break;
+				
 				case "append":
 					if (!lines.nameExists(instruction[1])) {
 						System.out.println("Invalid line name");
@@ -238,14 +292,19 @@ public class TrainsProgram {
 					break;
 					
 				case "insert":
+					if (!(instruction[3].matches("[0-9.]+") && instruction[4].matches("[0-9.]+") && instruction[5].matches("[0-9.]+"))) {
+						System.out.println("Incorrect index or distances provided");
+						break;
+					}
+						
 					if (lines.nameExists(instruction[1]) && stations.nameExists(instruction[2])) {
-						lines.find(instruction[1]).addStation(stations.find(instruction[2]),Integer.parseInt(instruction[3]));
+						lines.find(instruction[1]).addStation(stations.find(instruction[2]),Integer.parseInt(instruction[3]),Integer.parseInt(instruction[4]),Integer.parseInt(instruction[5]));
 					}
 					
 					else if (lines.nameExists(instruction[1]) && !stations.nameExists(instruction[2])) {
 						Station aux = new Station(instruction[2]); 
 						stations.add(aux);
-						lines.find(instruction[1]).addStation(aux,Integer.parseInt(instruction[3]));
+						lines.find(instruction[1]).addStation(aux,Integer.parseInt(instruction[3]),Integer.parseInt(instruction[4]),Integer.parseInt(instruction[5]));
 					}
 					
 					else {
@@ -407,7 +466,7 @@ public class TrainsProgram {
 					
 				case "save": 
 					{
-						SaveDatabases save = new SaveDatabases(lines, stations);
+						SaveDatabases save = new SaveDatabases(lines, stations, RVs,RVmodels, trains, trainTemplates);
 						save.writeToFile(instruction[1]);
 					}
 					break;
@@ -415,8 +474,13 @@ public class TrainsProgram {
 				case "load": 
 					{	
 						SaveDatabases load = SaveDatabases.readFromFile(instruction[1]);
-						TrainsProgram.lines = load.getLines();
-						TrainsProgram.stations = load.getStations();
+						lines = load.getLines();
+						stations = load.getStations();
+						RVs = load.getRVs();
+						RVmodels = load.getRVTemplates();
+						trains = load.getTrains();
+						trainTemplates = load.getTrainTemplates();
+						
 					}
 					break;
 					

@@ -15,7 +15,10 @@ public class Connection {
 	}
 	
 	public void printInfo() {
-		System.out.println("Direction: " + station.getName() + "\nline: " + line.getName() + "\ndistance: " + Integer.toString(distance) + " m" + "Index: " + Integer.toString(stationIndex));
+		System.out.println("Direction: " + station.getName());
+		System.out.println("line: " + line.getName());
+		System.out.println("distance: " + Integer.toString(distance) + " m");
+		System.out.println("Index: " + Integer.toString(stationIndex));
 	}
 	
 	public Station getStation() {

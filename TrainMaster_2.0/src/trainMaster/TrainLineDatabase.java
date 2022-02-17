@@ -10,14 +10,16 @@ public class TrainLineDatabase extends UniqueNameDatabase<TrainLine>{
 	public void printNamesStations() {
 		for(TrainLine i: array) {
 			System.out.println(i.getName());
-			i.printStations("\t");
+			i.printStations();
+			System.out.println();
 		}
 	}
 	
 	public void printNamesExchanges() {
 		for(TrainLine i: array) {
 			System.out.println(i.getName());
-			i.printExchanges("\t");
+			i.printExchanges();
+			System.out.println();
 		}	
 	}
 	

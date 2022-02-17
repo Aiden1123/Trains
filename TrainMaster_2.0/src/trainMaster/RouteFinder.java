@@ -193,9 +193,7 @@ public class RouteFinder {
 				displayTime = false;
 			}
 			
-			//check if line works
-			
-			while(i+1<route.size() && route.get(i).getLine().equals(route.get(i+1).getLine()) && route.get(i).getLine().checkIfStationsAreAdjacent(route.get(i).getStation(), route.get(i+1).getStation())) {
+			while(i+1<route.size() && route.get(i).getLine().equals(route.get(i+1).getLine()) && Math.abs(route.get(i).getStationIndex() - route.get(i+1).getStationIndex()) == 1) {
 				i++;
 				if (time >= 0) {
 					time += (int) CalculateTime(train,route.get(i).getDistance());

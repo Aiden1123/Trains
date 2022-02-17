@@ -20,4 +20,9 @@ public class Exchange implements Serializable {
 		public TrainLine getLine() {
 			return line;
 		}
+		
+		public void printInfo() {
+			System.out.println("Station: " + station.getName());
+			System.out.println("Line: " + line.getName());
+		}
 }

@@ -1,19 +1,16 @@
--delete cars
--delete templates
--delete trains
--delete all trains in depot
--delete all cars in depot
--delete all trains
--delete all cars
--delete all templates
++delete cars
++delete templates
++delete trains
++delete all trains in depot
++delete all cars in depot
 
--delete stop from line
--delete stop
--delete line
++delete stop from line
++delete stop
++delete line
 
--better prints for everything
++better prints for everything
 
--saving and loading
++saving and loading
 
 +add train to line
 +add train from template to line
@@ -22,4 +19,6 @@
 +Time calculation
 +Finding route by lowest time
 +nice presentation
--correct printing function
++correct printing function
+
+TEST!

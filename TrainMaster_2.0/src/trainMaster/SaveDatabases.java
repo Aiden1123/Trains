@@ -8,16 +8,27 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import trains.*;
 
 public class SaveDatabases implements Serializable{
 	
 	private static final long serialVersionUID = 63472L;
 	TrainLineDatabase lines;
 	StationDatabase stations;
+	RailVehicleDatabase RVs;
+	RailVehicleTemplateDatabase RVTemplates;
+	TrainDatabase trains;
+	TrainTemplateDatabase trainTemplates;
 	
-	SaveDatabases(TrainLineDatabase lines, StationDatabase stations) {
+	SaveDatabases(TrainLineDatabase lines, StationDatabase stations,RailVehicleDatabase RVs, 
+				  RailVehicleTemplateDatabase RVTemplates, TrainDatabase trains, TrainTemplateDatabase trainTemplates) {
+		
 		this.lines = lines;
 		this.stations = stations;
+		this.RVs = RVs;
+		this.RVTemplates = RVTemplates;
+		this.trains = trains;
+		this.trainTemplates = trainTemplates;
 	}
 	
 	public void writeToFile(String filename) {
@@ -64,5 +75,21 @@ public class SaveDatabases implements Serializable{
 
 	public StationDatabase getStations() {
 		return stations;
+	}
+
+	public RailVehicleDatabase getRVs() {
+		return RVs;
+	}
+
+	public RailVehicleTemplateDatabase getRVTemplates() {
+		return RVTemplates;
+	}
+
+	public TrainDatabase getTrains() {
+		return trains;
+	}
+
+	public TrainTemplateDatabase getTrainTemplates() {
+		return trainTemplates;
 	}
 }

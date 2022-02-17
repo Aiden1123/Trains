@@ -88,21 +88,102 @@ public class TrainLine extends NamedObject {
 		}
 	}
 	
-	public void deleteStation(Station station) {
-		this.stations.remove(station);
-		station.deleteLine(this);
-	}
-	
-	public void deleteStation(int index) {
+	public void deleteStation(int index,int distance) {
 		
-		try {
-			Station a = this.stations.get(index);
-			this.stations.remove(index);
-			a.deleteLine(this);
+		if (index < 0 || index >= stations.size()) {
+			System.out.println("Incorrect index provided");
+			return;
 		}
-		catch(IndexOutOfBoundsException e) {
-			System.out.println("Invalid index");
+		
+		if (stations.size()==1) {
+			
 		}
+		
+		else if (index == stations.size()-1) {
+			for(Connection connection: stations.get(index).getConnections()) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index) {
+					stations.get(index).getConnections().remove(connection);
+					break;
+				}
+			}
+			
+			for(Connection connection: stations.get(index-1).getConnections()) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index-1) {
+					stations.get(index-1).getConnections().remove(connection);
+					break;
+				}
+			}
+		}
+		
+		else if (index == 0) {
+			for(Connection connection: stations.get(index).getConnections()) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index) {
+					stations.get(index).getConnections().remove(connection);
+					break;
+				}
+			}
+			
+			for(Connection connection: stations.get(index+1).getConnections()) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index+1) {
+					stations.get(index+1).getConnections().remove(connection);
+					break;
+				}
+			}
+			
+			for(int i=0;i<stations.size();i++) {
+				for(Connection connection: stations.get(i).getConnections()) {
+					if (connection.getLine().equals(this) && connection.getStationIndex() == i+1) {
+						connection.setStationIndex(connection.getStationIndex()-1);
+					}
+				}
+			}
+		}
+		
+		else {
+			for(Connection connection: stations.get(index).getConnections()) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index) {
+					stations.get(index).getConnections().remove(connection);
+					break;
+				}
+			}
+			
+			for(Connection connection: stations.get(index+1).getConnections()) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index+1) {
+					stations.get(index+1).getConnections().remove(connection);
+					break;
+				}
+			}
+			for(Connection connection: stations.get(index-1).getConnections()) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index-1) {
+					stations.get(index-1).getConnections().remove(connection);
+					break;
+				}
+			}
+			
+			stations.get(index-1).getConnections().add(new Connection(stations.get(index+1),this,distance,index-1));
+			stations.get(index+1).getConnections().add(new Connection(stations.get(index-1),this,distance,index));
+
+			for(int i=index+1;i<stations.size();i++) {
+				for(Connection connection: stations.get(i).getConnections()) {
+					if (connection.getLine().equals(this) && connection.getStationIndex() == i+1) {
+						connection.setStationIndex(connection.getStationIndex()-1);
+					}
+				}
+			}
+		
+		}
+		
+		Station stationToDelete = stations.get(index);
+		ArrayList<Exchange> exchangesToDelete = new ArrayList<Exchange>();
+		stations.remove(index);
+		for(Exchange exchange: exchanges.getExchanges()) {
+			if (exchange.getStation().equals(stationToDelete)) {
+				exchange.getLine().getExchanges().remove(new Exchange(stationToDelete,this));
+				exchangesToDelete.add(exchange);
+			}
+		}
+		exchanges.getExchanges().removeAll(exchangesToDelete);
+		stationToDelete.deleteLine(this);
 	}
 
 	public void printStations() {
@@ -112,31 +193,11 @@ public class TrainLine extends NamedObject {
 		}
 	}
 	
-	public void printStations(String message) {
-		int i=0;
-		for(Station station: stations) {
-			System.out.print(message);
-			System.out.println(Integer.toString(i++) + ": " + station.getName());
-		}
-	}
-	
 	public void printExchanges() {
 		for(Exchange i: exchanges.getExchanges()) {
-			System.out.printf("%s: %s\n",i.getStation().getName(),i.getLine().getName());
+			i.printInfo();
+			System.out.println("---------");
 		}
-	}
-
-	public void printExchanges(String message) {
-		for(Exchange i: exchanges.getExchanges()) {
-			System.out.printf("%s%s: %s\n",message,i.getStation().getName(),i.getLine().getName());
-		}
-	}
-	
-	public boolean checkIfStationsAreAdjacent(Station a, Station b) {
-		if ((stations.indexOf(a) - stations.indexOf(b) == 1) || (stations.indexOf(a) - stations.indexOf(b) == -1)) {
-			return true;
-		}
-		return false;
 	}
 	
 	public Train getTrain() {

@@ -1,5 +1,6 @@
 package trains;
 import idObjects.*;
+import java.util.ArrayList;
 
 public class TrainDatabase extends IdObjectDatabase<Train>{
 
@@ -12,5 +13,20 @@ public class TrainDatabase extends IdObjectDatabase<Train>{
 		}
 		this.remove(train);
 	}
+	
+	public void removeDepotTrains() {
+		ArrayList<Train> toDelete = new ArrayList<Train>();
+		for(Train train : array) {
+			if(train.getLine() == null) {
+				toDelete.add(train);
+			}
+		}
+		
+		for(Train train: toDelete) {
+			removeTrain(train);
+		}
+	
+	}
+	
 	
 }

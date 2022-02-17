@@ -16,6 +16,7 @@ public class RailVehicle extends IdObject {
 	public void printInfo() {
 		System.out.printf("id: %d\nmodel: ",id);
 		System.out.println(model.getName());
+		model.printInfo();
 		System.out.println("Current location: " + ((train == null) ? "Depot" : "appended to train: " + Integer.toString(train.getId())));
 	}
 

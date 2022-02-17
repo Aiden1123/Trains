@@ -63,6 +63,7 @@ public class Train extends IdObject {
 	
 	public void printStats() {
 		System.out.printf("Capacity: %d People\nPower: %d kW\nMaxVelocity: %d km/h\nLength: %d meters\nMass: %d Tonnes\n", capacity, power, maxSpeed,length,mass);
+		System.out.println("Appended to line: " + (line == null ? "None" : line.getName()));
 	}
 	
 	public void printInfo() {
@@ -70,6 +71,7 @@ public class Train extends IdObject {
 		for(RailVehicle car: cars) {
 			System.out.println(car.getModel().getName() + "\t" + Integer.toString(car.getId()));
 		}
+		System.out.println("Appended to line: " + (line == null ? "None" : line.getName()));
 	}
 
 	public int getMass() {
