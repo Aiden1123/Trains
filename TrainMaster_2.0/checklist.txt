@@ -22,3 +22,4 @@
 +correct printing function
 
 TEST!
+Inserting station at index 0 doesn't work

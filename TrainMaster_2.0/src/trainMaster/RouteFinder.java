@@ -39,6 +39,7 @@ public class RouteFinder {
 		
 		if (P==0) {
 			System.out.println("Engine not detected!");
+			return -1;
 		}
 		
 		//Step 1 check if distance allows to reach max speed
@@ -211,6 +212,7 @@ public class RouteFinder {
 		
 		if(displayTime) {
 			System.out.printf("Total travel time: %02d:%02d:%02d",totalTime/3600,(totalTime%3600)/60,totalTime%60);
+			System.out.println();
 		}
 	}
 	

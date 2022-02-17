@@ -1,0 +1,44 @@
+add line Red Blue Brown Orange Teal Green Magenta Yellow Pink Purple Lime
+append Lime Edinburgh 0 Manchester 280000 Birmingham 115000 London 163000 Paris 341000
+append Purple Lisboa 0 Madrid 488000 Barcelona 510000 Toulouse 254000 Nantes 467000 Paris 343000
+append Pink Malaga 0 Murcia 334000 Barcelona 471000 Toulouse 254000 Nantes 467000 Paris 343000
+append Teal Toulouse 0 Genova 609000 Zurich 333000 Munchen 244000 Praha 296000 Krakow 398000 Lviv 287000 Kyiv 471000 Kharkiv 411000
+append Orange Moskva 0 Minsk 670000 Warszawa 478000 Berlin 511000 Hannover 257000 Amsterdam 328000
+append Green Amsterdam 0 Brussel 176000 Strasbourg 344000 Munchen 295000 Wien 354000 Budapest 209000
+append Green Cluj-Napoca 320000 Bucuresti 350000 Sofia 291000 Tesaloniki 236000 Athina 378000
+append Yellow Istanbul 0 Varna 334000 Sofia 380000 Beograd 330000 Sarajevo 190000 Zagreb 290000 Venezia 300000
+append Yellow Milano 252000 Genova 114000 Nantes 863000
+append Magenta Paris 0 Strasbourg 402000 Munchen 295000 Wien 354000 Budapest 209000 Bucuresti 642000
+append Magenta Varna 200000 Istanbul 334000
+append Brown Athina 0 Tesaloniki 378000 Tirana 278000 Beograd 387000 Budapest 324000 Krakow 288000 Warszawa 250000 Vilnius 398000 Riga 257000 Tallinn 286000
+append Blue Paris 0 Brussel 270000 Hannover 416000 Hamburg 126000 Kobenhavn 284000 Stockholm 534000 Lulea 791000
+append Red Trondheim 0 Bergen 445000 Oslo 309000 Goteborg 249000 Kobenhavn 303000 Berlin 436000 Munchen 512000 Milano 351000
+append Red Roma 472000 Napoli 186000 Bari 219000
+add template emu Eurostar 665 300 387 900 12240
+add template emu TGV 380 320 200 508 9280
+add template emu ice 409 320 200 441 8000
+add template carriage bmpz 40 230 26 80
+add template loco eurosprinter 87 230 34 6400
+add template loco griffin 88 160 20 5600
+add template train Eurostar
+add template train TGV
+add template train ice
+add template train railjet
+add template train pkpic
+attachModel Eurostar Eurostar
+attachModel TGV TGV
+attachModel ice ice
+attachModel railjet eurosprinter bmpz bmpz bmpz bmpz bmpz bmpz bmpz
+attachModel pkpic griffin bmpz bmpz bmpz bmpz bmpz bmpz bmpz bmpz
+assignTemplate Lime Eurostar Eurostar Eurostar
+assignTemplate Purple TGV TGV
+assignTemplate Pink TGV TGV
+assignTemplate Blue pkpic pkpic pkpic
+assignTemplate Red ice
+assignTemplate Green railjet
+assignTemplate Blue ice
+assignTemplate Yellow TGV TGV TGV TGV
+assignTemplate Magenta railjet railjet railjet
+assignTemplate Brown pkpic
+assignTemplate Teal pkpic
+assignTemplate Orange ice ice ice ice ice
