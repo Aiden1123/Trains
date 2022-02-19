@@ -214,6 +214,43 @@ public class TrainsProgram {
 					}
 					break;
 
+				case "prepend":
+					if (!lines.nameExists(instruction[1])) {
+						System.out.println("Invalid line name");
+						break;
+					}
+					
+					for(int i=2;i<instruction.length;i+=2) {
+					
+						if (stations.nameExists(instruction[i]) && instruction[i+1].matches("[0-9.]+")) {
+							lines.find(instruction[1]).prependStation(stations.find(instruction[i]), Integer.parseInt(instruction[i+1]));
+						}
+						
+						else {
+							if (instruction[i+1].matches("[0-9.]+")) {
+								Station aux = new Station(instruction[i]); 
+								stations.add(aux);
+								lines.find(instruction[1]).prependStation(aux, Integer.parseInt(instruction[i+1]));
+							}
+						}
+
+					}
+					break;
+					
+				case "disengage":
+					if (!lines.nameExists(instruction[1])) {
+						System.out.println("Invalid line name");
+						break;
+					}
+					
+					if (!instruction[2].matches("[0-9.]+") || !instruction[3].matches("[0-9.]+")) {
+						System.out.println("Invalid index or distance provided");
+						break;						
+					}
+					
+					lines.find(instruction[1]).deleteStation(Integer.parseInt(instruction[2]),Integer.parseInt(instruction[3]));
+					break;
+					
 				case "attach":
 					if(instruction[1].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[1])))) {
 						for(int i=2;i<instruction.length;i++) 

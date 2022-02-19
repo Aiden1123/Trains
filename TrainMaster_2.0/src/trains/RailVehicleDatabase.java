@@ -12,7 +12,9 @@ public class RailVehicleDatabase extends IdObjectDatabase<RailVehicle>{
 	}
 	
 	public void deleteRV(RailVehicle car) {
-		car.getTrain().remove(car);
+		if (car.getTrain() != null) {
+			car.getTrain().remove(car);
+		}
 		this.remove(car);
 	}
 	

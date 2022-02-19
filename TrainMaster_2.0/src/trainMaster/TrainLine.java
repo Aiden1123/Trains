@@ -43,6 +43,23 @@ public class TrainLine extends NamedObject {
 		station.addLine(this,distance);
 	}
 	
+	public void prependStation(Station station, int distance) {
+		this.stations.add(0,station);
+		
+		station.getConnections().add(new Connection(this.stations.get(1),this, distance, 0));
+		this.stations.get(1).getConnections().add(new Connection(station,this, distance, 1));
+		
+		for(int i = 1;i < stations.size();i++) {
+			for(Connection connection: stations.get(i).getConnections()) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == i-1) {
+					connection.setStationIndex(i);
+				}
+			}
+		}
+		
+		station.addLineWithoutConnection(this);
+	}
+	
 	public void addStation(Station station, int index, int distance_a, int distance_b) {
 
 		if (index == stations.size()) {

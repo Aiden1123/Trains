@@ -22,4 +22,6 @@
 +correct printing function
 
 TEST!
-Inserting station at index 0 doesn't work
+Inserting station at index 0 doesn't work SOLVED
+deleting line didn't affect exchanges (it should) but connections were ok
+deleting station exchanges were ok but connections are completely destroyed
