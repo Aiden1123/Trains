@@ -1,5 +1,5 @@
 package trainMaster;
-
+/*
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -35,3 +35,4 @@ public class ExchangeDatabase  implements Serializable {
 	}
 	
 }
+*/

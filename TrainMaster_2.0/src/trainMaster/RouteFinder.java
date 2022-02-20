@@ -220,10 +220,14 @@ public class RouteFinder {
 		for(int i=1;i<route.size();i++) {
 			if (route.get(i-1).getLine().equals(route.get(i).getLine())) {
 				continue;
-			}
-			if (route.get(i).getStation().getConnections().contains(new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance(),route.get(i-1).getStationIndex()+1)) || route.get(i).getStation().getConnections().contains(new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance(),route.get(i-1).getStationIndex()-1))) {
-				route.add(i, new Connection(route.get(i).getStation(),route.get(i-1).getLine(),route.get(i).getDistance(),-1) );
-				route.remove(i+1);
+			} 
+			
+			for(Connection connection: route.get(i-1).getStation().getConnections()) {
+				if (connection.getLine().equals(route.get(i-1).getLine()) && connection.getStation().equals(route.get(i).getStation()) && connection.getDistance() == route.get(i).getDistance() && 1 == Math.abs(connection.getStationIndex() - route.get(i).getStationIndex())) {
+					route.add(i,connection);
+					route.remove(i+1);
+					break;
+				}
 			}
 		}
 		return route;

@@ -42,7 +42,13 @@ public class TrainLineDatabase extends UniqueNameDatabase<TrainLine>{
 		
 		
 		for(Exchange exchange : line.getExchanges()) {
-			exchange.getLine().getExchanges().remove(new Exchange(exchange.getStation(),line));
+			ArrayList<Exchange> toDelete = new ArrayList<Exchange>();
+			for(Exchange otherExchange: exchange.getLine().getExchanges()) {
+				if (otherExchange.getLine().equals(line)) {
+					toDelete.add(otherExchange);
+				}
+			}
+			exchange.getLine().getExchanges().removeAll(toDelete);
 		}
 		
 		line.getExchanges().clear();

@@ -8,13 +8,13 @@ public class TrainLine extends NamedObject {
 
 	private static final long serialVersionUID = -6343023013881887764L;
 	ArrayList<Station> stations;
-	ExchangeDatabase exchanges;
+	ArrayList<Exchange> exchanges;
 	ArrayList<Train> trains;
 	
 	TrainLine(String name) {
 		super(name);
 		this.stations = new ArrayList<Station>();
-		this.exchanges = new ExchangeDatabase();
+		this.exchanges = new ArrayList<Exchange>();
 		this.trains = new ArrayList<Train>();
 	}
 	
@@ -125,7 +125,7 @@ public class TrainLine extends NamedObject {
 			}
 			
 			for(Connection connection: stations.get(index-1).getConnections()) {
-				if (connection.getLine().equals(this) && connection.getStationIndex() == index-1) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index-1 && connection.getStation().equals(stations.get(index))) {
 					stations.get(index-1).getConnections().remove(connection);
 					break;
 				}
@@ -149,29 +149,30 @@ public class TrainLine extends NamedObject {
 			
 			for(int i=0;i<stations.size();i++) {
 				for(Connection connection: stations.get(i).getConnections()) {
-					if (connection.getLine().equals(this) && connection.getStationIndex() == i+1) {
-						connection.setStationIndex(connection.getStationIndex()-1);
+					if (connection.getLine().equals(this) && connection.getStationIndex()==i) {
+						connection.setStationIndex(i-1);
 					}
 				}
 			}
 		}
 		
 		else {
+			ArrayList<Connection> toDelete = new ArrayList<Connection>();
 			for(Connection connection: stations.get(index).getConnections()) {
 				if (connection.getLine().equals(this) && connection.getStationIndex() == index) {
-					stations.get(index).getConnections().remove(connection);
-					break;
+					toDelete.add(connection);
 				}
 			}
+			stations.get(index).getConnections().removeAll(toDelete);
 			
 			for(Connection connection: stations.get(index+1).getConnections()) {
-				if (connection.getLine().equals(this) && connection.getStationIndex() == index+1) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index+1 && connection.getStation().equals(stations.get(index))) {
 					stations.get(index+1).getConnections().remove(connection);
 					break;
 				}
 			}
 			for(Connection connection: stations.get(index-1).getConnections()) {
-				if (connection.getLine().equals(this) && connection.getStationIndex() == index-1) {
+				if (connection.getLine().equals(this) && connection.getStationIndex() == index-1 && connection.getStation().equals(stations.get(index))) {
 					stations.get(index-1).getConnections().remove(connection);
 					break;
 				}
@@ -182,7 +183,7 @@ public class TrainLine extends NamedObject {
 
 			for(int i=index+1;i<stations.size();i++) {
 				for(Connection connection: stations.get(i).getConnections()) {
-					if (connection.getLine().equals(this) && connection.getStationIndex() == i+1) {
+					if (connection.getLine().equals(this) && connection.getStationIndex() == i) {
 						connection.setStationIndex(connection.getStationIndex()-1);
 					}
 				}
@@ -191,15 +192,27 @@ public class TrainLine extends NamedObject {
 		}
 		
 		Station stationToDelete = stations.get(index);
-		ArrayList<Exchange> exchangesToDelete = new ArrayList<Exchange>();
 		stations.remove(index);
-		for(Exchange exchange: exchanges.getExchanges()) {
+		ArrayList<Exchange> exchangesToDelete = new ArrayList<Exchange>();
+		
+		for(Exchange exchange: exchanges) {
 			if (exchange.getStation().equals(stationToDelete)) {
-				exchange.getLine().getExchanges().remove(new Exchange(stationToDelete,this));
+				Exchange ExchangeFromOtherLineToDelete = null;
+				for(Exchange otherExchange: exchange.getLine().getExchanges()) {
+					if (otherExchange.getLine().equals(this) && otherExchange.getStation().equals(stationToDelete)) {
+						if(!(stations.contains(stationToDelete))) {
+							ExchangeFromOtherLineToDelete=otherExchange;
+							break;
+						}
+					}
+				}
+				if (ExchangeFromOtherLineToDelete != null) {
+					exchange.getLine().getExchanges().remove(ExchangeFromOtherLineToDelete);
+				}
 				exchangesToDelete.add(exchange);
 			}
 		}
-		exchanges.getExchanges().removeAll(exchangesToDelete);
+		exchanges.removeAll(exchangesToDelete);
 		stationToDelete.deleteLine(this);
 	}
 
@@ -211,7 +224,7 @@ public class TrainLine extends NamedObject {
 	}
 	
 	public void printExchanges() {
-		for(Exchange i: exchanges.getExchanges()) {
+		for(Exchange i: exchanges) {
 			i.printInfo();
 			System.out.println("---------");
 		}
@@ -229,7 +242,7 @@ public class TrainLine extends NamedObject {
 	}
 
 	public ArrayList<Exchange> getExchanges() {
-		return exchanges.getExchanges();
+		return exchanges;
 	}
 
 	public ArrayList<Train> getTrains() {

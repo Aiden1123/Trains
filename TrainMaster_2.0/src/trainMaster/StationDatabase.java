@@ -17,5 +17,6 @@ public class StationDatabase extends UniqueNameDatabase<Station> {
 		while(!(station.getLines().isEmpty())) {
 			station.getLines().get(0).deleteStation(station.getLines().get(0).getStations().indexOf(station), 10000);
 		}
+		this.delete(station);
 	}
 }

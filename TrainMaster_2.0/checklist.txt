@@ -23,5 +23,7 @@
 
 TEST!
 Inserting station at index 0 doesn't work SOLVED
-deleting line didn't affect exchanges (it should) but connections were ok
-deleting station exchanges were ok but connections are completely destroyed
+deleting line didn't affect exchanges (it should) but connections were ok SOLVED
+deleting station exchanges were ok but connections are completely destroyed SOLVED
+deleting station from line breaks exchanges (FIXED BUT NOT TESTED)
+route was not sanitaised somehow (Athina to Paris) SOLVE D
