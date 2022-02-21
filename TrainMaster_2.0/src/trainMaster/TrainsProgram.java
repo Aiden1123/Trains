@@ -1,6 +1,7 @@
 package trainMaster;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 import trains.*;
 
@@ -13,7 +14,7 @@ public class TrainsProgram {
 	static TrainDatabase trains;
 	static TrainTemplateDatabase trainTemplates;
 	
-	public static void executeScript(String filename) {
+	private static void executeScript(String filename) {
 	    try {
 	        File myObj = new File(filename);
 	        Scanner myReader = new Scanner(myObj);
@@ -23,13 +24,27 @@ public class TrainsProgram {
 	        }
 	        
 	        myReader.close();
-	      } catch (Exception e) {
-	        System.out.println("An error occurred.");
+	      } 
+	    
+	    catch (FileNotFoundException e) {
+	    	System.out.println("File " + filename + " has not been found");
+	    }
+	    
+	    catch (Exception e) {
+	        System.out.println("Unknown error occured while reading from " +  filename);
 	        e.printStackTrace();
 	      }
 	}
 	
-	public static void menu(String[] instruction) {
+	private static void unknownInstruction(String word) {
+		System.out.println("Unknown instruction: " + word + " Use help to list available instructions");
+	}
+	
+	private static void wrongToken(String word) {
+		System.out.println(word + " is not defined for this instruction");
+	}
+	
+	private static void menu(String[] instruction) {
 
 			try {
 			
@@ -43,11 +58,17 @@ public class TrainsProgram {
 					if (!(stations.find(instruction[1]) == null) && !(stations.find(instruction[2]) == null)) {
 						RouteFinder.FewestExchangesPretty(stations.find(instruction[1]), stations.find(instruction[2]));
 					}
+					else {
+						System.out.println("At least one of the provided station does not exist");
+					}
 					break;
 				
 				case "route":
 					if (!(stations.find(instruction[1]) == null) && !(stations.find(instruction[2]) == null)) {
 						RouteFinder.LowestDistance(stations.find(instruction[1]), stations.find(instruction[2]));
+					}
+					else {
+						System.out.println("At least one of the provided station does not exist");
 					}
 					break;
 					
@@ -129,11 +150,20 @@ public class TrainsProgram {
 								case "train":
 									trainTemplates.add(new TrainTemplate(instruction[3]));
 									break;
+								
+								default:
+									wrongToken(instruction[2]);
+									break;
 							}
 							break;
 						case "train":
 							trains.add(new Train());
 							break;
+						
+						default:
+							unknownInstruction(instruction[0] + " " +  instruction[1]);
+							break;
+						
 					}
 					break;
 				
@@ -149,7 +179,7 @@ public class TrainsProgram {
 								trains.removeTrain(trains.find(Integer.parseInt(instruction[2])));
 								break;
 							}
-							System.out.println("Incorrect instruction on 3rd word");
+							System.out.println("Incorrect Id Provided");
 							break;
 							
 						case "car":
@@ -161,12 +191,15 @@ public class TrainsProgram {
 								RVs.deleteRV(RVs.find(Integer.parseInt(instruction[2])));
 								break;
 							}
-							System.out.println("Incorrect instruction on 3rd word");
+							System.out.println("Incorrect Id provided");
 							break;
 							
 						case "trainTemplate":
 							if (trainTemplates.nameExists(instruction[2])) {
 								trainTemplates.delete(trainTemplates.find(instruction[2]));
+							}
+							else {
+								System.out.println("Incorrect name provided");
 							}
 							break;
 							
@@ -174,11 +207,17 @@ public class TrainsProgram {
 							if (RVmodels.nameExists(instruction[2])) {
 								RVmodels.delete(RVmodels.find(instruction[2]));
 							}
+							else {
+								System.out.println("Incorrect name provided");
+							}
 							break;
 							
 						case "line":
 							if (lines.nameExists(instruction[2])) {
 								lines.deleteTrainLine(lines.find(instruction[2]));
+							}
+							else {
+								System.out.println("Incorrect name provided");
 							}
 							break;
 							
@@ -186,6 +225,13 @@ public class TrainsProgram {
 							if (stations.nameExists(instruction[2])) {
 								stations.deleteStation(stations.find(instruction[2]));
 							}
+							else {
+								System.out.println("Incorrect name provided");
+							}
+							break;
+							
+						default:
+							unknownInstruction(instruction[0] + " " + instruction[1]);
 							break;
 					}
 				
@@ -209,6 +255,10 @@ public class TrainsProgram {
 								stations.add(aux);
 								lines.find(instruction[1]).addStation(aux, Integer.parseInt(instruction[i+1]));
 							}
+							
+							else {
+								System.out.println("Incorrect distance provided");
+							}
 						}
 
 					}
@@ -231,6 +281,9 @@ public class TrainsProgram {
 								Station aux = new Station(instruction[i]); 
 								stations.add(aux);
 								lines.find(instruction[1]).prependStation(aux, Integer.parseInt(instruction[i+1]));
+							}
+							else {
+								System.out.println("Incorrect distance provided");
 							}
 						}
 
@@ -262,9 +315,12 @@ public class TrainsProgram {
 								RVs.add(aux);
 								trains.find(Integer.parseInt(instruction[1])).add(aux);
 							}
+							else {
+								System.out.println("car not found");
+							}
 					}
 					else {
-						System.out.println("Incorrect Ids provided");
+						System.out.println("Incorrect Id provided");
 					}
 					break;
 				
@@ -274,9 +330,12 @@ public class TrainsProgram {
 							if (instruction[i].matches("[0-9.]+") && (RVs.idTaken(Integer.parseInt(instruction[i])))) {
 								trains.find(Integer.parseInt(instruction[1])).remove(RVs.find(Integer.parseInt(instruction[i])));
 							}
+							else {
+								System.out.println("Incorrect Id provided");
+							}							
 					}
 					else {
-						System.out.println("Incorrect Ids provided");
+						System.out.println("Incorrect Id provided");
 					}
 					break;
 					
@@ -298,6 +357,9 @@ public class TrainsProgram {
 							if (RVmodels.nameExists(instruction[i])) {
 								trainTemplates.find(instruction[1]).remove(RVmodels.find(instruction[i]));
 							}
+							else {
+								System.out.println("Incorrect name provided");
+							}
 					}
 					else {
 						System.out.println("Incorrect name provided");
@@ -313,6 +375,12 @@ public class TrainsProgram {
 								trains.find(Integer.parseInt(instruction[1])).add(aux);
 							}
 						}
+						else {
+							System.out.println("Incorrect train template provided");							
+						}
+					}
+					else {
+						System.out.println("Incorrect train Id provided");
 					}
 					break;
 					
@@ -325,6 +393,9 @@ public class TrainsProgram {
 							train.add(aux);
 						}
 						trains.add(train);
+					}
+					else {
+						System.out.println("Incorrect train template provided");							
 					}
 					break;
 					
@@ -345,7 +416,7 @@ public class TrainsProgram {
 					}
 					
 					else {
-						System.out.println("Incorrect station or line name");
+						System.out.println("Incorrect station or line name provided");
 					}
 					break;
 					
@@ -354,6 +425,9 @@ public class TrainsProgram {
 						for(int i=2;i<instruction.length;i++) {
 							if (instruction[i].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[i])))) {
 								lines.find(instruction[1]).addTrain(trains.find(Integer.parseInt(instruction[i])));
+							}
+							else {
+								System.out.println("Incorrect train Id provided");
 							}
 						}
 					}
@@ -368,6 +442,9 @@ public class TrainsProgram {
 							if (instruction[i].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[i])))) {
 								lines.find(instruction[1]).removeTrain(trains.find(Integer.parseInt(instruction[i])));
 							}
+							else {
+								System.out.println("Incorrect train Id provided");
+							}
 						}
 					}
 					else {
@@ -381,12 +458,17 @@ public class TrainsProgram {
 							if (trainTemplates.nameExists(instruction[i])) {
 								Train train = new Train();
 								for(RailVehicleTemplate carTemplate: trainTemplates.find(instruction[i]).getCars()) {
+									
 									RailVehicle aux = new RailVehicle(carTemplate);
 									RVs.add(aux);
 									train.add(aux);
+								
 								}
 								trains.add(train);
 								lines.find(instruction[1]).addTrain(train);
+							}
+							else {
+								System.out.println("Train template not found");
 							}
 						}
 					}
@@ -403,28 +485,43 @@ public class TrainsProgram {
 							System.out.println(Integer.toString(distance) + ": " + Long.toString(RouteFinder.CalculateTime(train,distance)));
 						}
 					}
+					else {
+						System.out.println("Incorrect train provided");
+					}
 					break;
 					
 				case "print":
 					switch(instruction[1]) {
 						case "line":
-							if (lines.nameExists(instruction[2]))
+							if (lines.nameExists(instruction[2])) {
 								lines.find(instruction[2]).printStations();
+							} else {
+								System.out.println("Line not found");
+							}
 							break;
 							
 						case "lineTrains":
-							if (lines.nameExists(instruction[2]))
+							if (lines.nameExists(instruction[2])) {
 								lines.find(instruction[2]).printTrains();
+							} else {
+								System.out.println("Line not found");
+							}
 							break;
 							
 						case "station":
-							if (stations.nameExists(instruction[2]))
+							if (stations.nameExists(instruction[2])) {
 								stations.find(instruction[2]).printLines();
+							} else {
+								System.out.println("Station not found");
+							}
 							break;
 
 						case "stationConnections":
-							if (stations.nameExists(instruction[2]))
+							if (stations.nameExists(instruction[2])) {
 								stations.find(instruction[2]).printConnections();
+							} else {
+								System.out.println("Station not found");
+							}
 							break;
 							
 						case "lines":
@@ -466,8 +563,7 @@ public class TrainsProgram {
 						case "trainCars":
 							if(instruction[2].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[2])))) {
 								trains.find(Integer.parseInt(instruction[2])).printInfo();
-							}
-							else {
+							} else {
 								System.out.println("Incorrect Id provided");
 							}
 							break;
@@ -475,25 +571,33 @@ public class TrainsProgram {
 						case "trainStats":
 							if(instruction[2].matches("[0-9.]+") && (trains.idTaken(Integer.parseInt(instruction[2])))) {
 								trains.find(Integer.parseInt(instruction[2])).printStats();
-							}
-							else {
+							} else {
 								System.out.println("Incorrect Id provided");
 							}
 							break;
 						
 						case "templateStats":
-							if (trainTemplates.nameExists(instruction[2]))
+							if (trainTemplates.nameExists(instruction[2])) {
 								trainTemplates.find(instruction[2]).printStats();
+							} else {
+								System.out.println("Train template not found");
+							}
 							break;
 						
 						case "templateCars":
-							if (trainTemplates.nameExists(instruction[2]))
+							if (trainTemplates.nameExists(instruction[2])) {
 								trainTemplates.find(instruction[2]).printInfo();
+							} else {
+								System.out.println("Train template not found");
+							}
 							break;
 							
 						case "templates":
 							trainTemplates.printNames();
 							break;
+							
+						case "default":
+							unknownInstruction(instruction[0] + " " + instruction[1]);
 					
 					}
 					break;
@@ -521,8 +625,201 @@ public class TrainsProgram {
 					}
 					break;
 					
+				case "help":
+					
+					if (instruction.length == 1) {
+						System.out.println("Use one of the instructions from below or use help <instruction>");
+						System.out.println("---Basic---");
+						System.out.println("add");
+						System.out.println("delete");
+						System.out.println("print");
+						System.out.println("---Manage line's stations---");
+						System.out.println("append");	
+						System.out.println("prepend");
+						System.out.println("insert");
+						System.out.println("disengage");
+						System.out.println("---Manage line's trains---");
+						System.out.println("assign");
+						System.out.println("assignTemplate");
+						System.out.println("withdraw");
+						System.out.println("---Manage train templates---");
+						System.out.println("attachModel");
+						System.out.println("detachModel");
+						System.out.println("---Manage trains---");
+						System.out.println("attach");
+						System.out.println("detach");
+						System.out.println("buildTemplate");
+						System.out.println("attachTemplate");
+						System.out.println("---Other---");						
+						System.out.println("test");
+						System.out.println("exec");
+						System.out.println("route");
+						System.out.println("routeC");
+						System.out.println("---Saving and loading---");							
+						System.out.println("load");
+						System.out.println("save");
+						System.out.println("---quit---");	
+						System.out.println("quit");
+					}
+					
+					else {
+						switch(instruction[1]) {
+						
+							case "add":
+								System.out.println("creates new object");
+								System.out.println("add line <name>\t//adds line");
+								System.out.println("add station <name>\t//adds station");
+								System.out.println("add carriage <model>\t//adds carriage");
+								System.out.println("add emu <model>\t//adds electric multiple unit");
+								System.out.println("add loco <model>\t//adds locomotive");
+								System.out.println("add template carriage <name>\t//add carriage model");
+								System.out.println("add template emu <name>\t//add EMU model");
+								System.out.println("add template loco <name>\t//add locomotive model");
+								System.out.println("add template train <name>\t//add train template");
+								System.out.println("add train\t//adds train");
+								break;
+								
+							case "print":
+								System.out.println("prints information about specified object(s)");
+								System.out.println("print line <name>\t//print line's stops");
+								System.out.println("print lineTrains <name>\t//print line's trains");
+								System.out.println("print lineExchanges <name>\t//print line's exchanges");
+								System.out.println("print station <name>\t//print station's lines");
+								System.out.println("print stationConnections <name>\t//print station's connections");
+								System.out.println("print lines\t//print lines' names");
+								System.out.println("print linesInfo\t//print lines and their stations");
+								System.out.println("print linesExchanges\t//print lines and their exchanges");
+								System.out.println("print stations\t//print stations' names");
+								System.out.println("print stationsInfo\t//print stations and their lines");
+								System.out.println("print RVmodels\t//print car models' specifications");
+								System.out.println("print RVnames\t//print car models' names");
+								System.out.println("print RVs\t//print cars");
+								System.out.println("print trains\t//print trains's IDs");
+								System.out.println("print templates\t//print train templates' names");
+								System.out.println("print trainCars <id>\t//print train's cars");
+								System.out.println("print trainStats <id>\t//print train's specifications");
+								System.out.println("print templateCars <id>\t//print train template's cars");
+								System.out.println("print templateCars <id>\t//print train template's specifications");
+								break;						
+							
+							case "delete":
+								System.out.println("deletes object");
+								System.out.println("delete train depot\t//delete all trains which are not running on lines");
+								System.out.println("delete train <id>\t//delete train");
+								System.out.println("delete car depot\t//delete all cars which are not attached to trains");
+								System.out.println("delete car <id>\t//delete car");
+								System.out.println("delete trainTemplate <name>\t//delete train template");
+								System.out.println("delete carTemplate <name>\t//delete car model");
+								System.out.println("delete line <name>\t//delete line");
+								System.out.println("delete station <name>\t//delete station");
+								break;
+								
+							case "append":
+								System.out.println("adds stations to the end of the line");
+								System.out.println("append <line> [<station> <distance>]");
+								break;
+								
+							case "prepend":
+								System.out.println("adds stations to the beginning of the line");
+								System.out.println("prepend <line> [<station> <distance>]");
+								break;
+								
+							case "insert":
+								System.out.println("adds stations at specified place between start and end in the line");
+								System.out.println("prepend <line> <station> <index> <distanceToPreviousStation> <distanceToNextStation>");
+								break;
+								
+							case "disengage":
+								System.out.println("removes station from the line");
+								System.out.println("remove <line> <stationIndex> <distance>");
+								break;
+								
+							case "assign":
+								System.out.println("adds train(s) to the line");
+								System.out.println("assign <line> [<trainId>]");
+								break;
+								
+							case "assignTemplate":
+								System.out.println("creates train(s) from template and adds them to the line");
+								System.out.println("assignTemplate <line> [<trainTemplate>]");
+								break;
+								
+							case "withdraw":
+								System.out.println("removes train(s) from the line");
+								System.out.println("withdraw <line> [<trainId>]");
+								break;
+								
+							case "attachModel":
+								System.out.println("attaches car model(s) to train template");
+								System.out.println("attachModel <trainTemplate> [<carModel>]");	
+								break;
+								
+							case "detachModel":
+								System.out.println("removes car model(s) from train template");
+								System.out.println("detachModel <trainTemplate> [<carModel>]");
+								break;
+								
+							case "attach":
+								System.out.println("attaches car(s) to train");
+								System.out.println("attach <trainId> [<carModel>]");
+								System.out.println("attach <trainId> [<carId>]");
+								break;
+								
+							case "detach":
+								System.out.println("removes car(s) from train");
+								System.out.println("detach <trainId> [<carId>]");
+								break;
+								
+							case "buildTemplate":
+								System.out.println("creates a train from template");
+								System.out.println("buildTemplate <trainTemplate>");
+								break;
+								
+							case "attachTemplate":
+								System.out.println("attaches cars from template to train");
+								System.out.println("attachTemplate <trainId> <trainTemplate>");
+								break;
+								
+							case "test":
+								System.out.println("tests how much train should travel certain distance");
+								System.out.println("test <trainId>");
+								break;
+								
+							case "exec":
+								System.out.println("executes instructions specified in file");
+								System.out.println("exec <file>");
+								break;
+								
+							case "route":
+								System.out.println("searches for the shortest route between 2 stations");
+								System.out.println("route <start> <end>");
+								break;
+								
+							case "routeC":
+								System.out.println("searches for the route with fewest exchanges between 2 stations");
+								System.out.println("routeC <start> <end>");
+								break;
+								
+							case "save":
+								System.out.println("saves current databases to file");
+								System.out.println("save <file>");
+								break;
+								
+							case "load":
+								System.out.println("loads databases from file");
+								System.out.println("load <file>");
+								break;
+								
+							default:
+								System.out.println("There is no instruction: " + instruction[1]);
+								break;
+						}
+					}
+					
+					break;
+					
 				default:
-					System.out.println("add line, print lines, print linesinfo, print stations, print stationsinfo, quit");
+					unknownInstruction(instruction[0]);
 					break;
 			}
 			

@@ -2,7 +2,7 @@ package trainMaster;
 
 import java.io.File;
 import java.io.FileInputStream;
-//import java.io.FileNotFoundException;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -61,11 +61,14 @@ public class SaveDatabases implements Serializable{
 			in.close();
 			input.close();
 		
-		} catch (IOException e) {
-			System.out.println("error while reading accounts from file");
+		} 
+		catch (FileNotFoundException e) {
+			System.out.println("File " + filename + "has not been found");
+		}
+		catch (IOException e) {
+			System.out.println("error while reading from file " + filename);
 			
 		}
-		
 		return aux;
 	}
 
