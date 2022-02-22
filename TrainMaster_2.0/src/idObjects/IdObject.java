@@ -1,8 +1,9 @@
 package idObjects;
 import java.io.Serializable;
 
+/**Object with id*/
 public class IdObject implements Serializable{
-
+	
 	private static final long serialVersionUID = -7132064532635976228L;
 	protected int id;
 

@@ -2,8 +2,9 @@ package namedObjects;
 
 import java.io.Serializable;
 
+/**Object with a name*/
 public class NamedObject implements Serializable {
-
+	
 	private static final long serialVersionUID = 346987913768539955L;
 	protected String name;
 

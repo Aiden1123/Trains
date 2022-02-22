@@ -2,6 +2,7 @@ package trainMaster;
 
 import java.io.Serializable;
 
+/**Exchange object holds data about possible exchange points */
 public class Exchange implements Serializable {
 	
 	private static final long serialVersionUID = 2574470783904638714L;

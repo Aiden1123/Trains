@@ -1,10 +1,15 @@
 package trainMaster;
 
+/**Connection object specifies which stations are 
+ * reachable within one stop from the station
+ * the distance, train line, and index of the station
+ * in the given line is also specified
+ */
 public class Connection {
 	
 	Station station;
 	TrainLine line;
-	int distance; //m
+	int distance; 		// in meters
 	int stationIndex;
 	
 	Connection(Station station, TrainLine line, int distance, int stationIndex) {

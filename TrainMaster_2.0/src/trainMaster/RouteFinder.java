@@ -5,10 +5,14 @@ import java.util.HashMap;
 import java.lang.Math;
 import trains.*;
 
+/**Collection of static methods used for path finding
+ * and calculating time of travel 
+ */
 public class RouteFinder {
 	
-	static double a = 0.5;
+	static double a = 0.5;	//maximal train acceleration and deceleration in m/s^2
 	
+	//Physics nonsense
 	private static long SmallDistance(Train train, long time) {
 		
 		double F = 1.0;
@@ -20,6 +24,7 @@ public class RouteFinder {
 									   + Math.pow(SpeedStage2(train,time), 2)/(2*a));
 	}
 	
+	//More physics nonsense
 	private static double SpeedStage2(Train train, long time) {
 		
 		double F = 1.0;
@@ -30,56 +35,43 @@ public class RouteFinder {
 	
 	}
 	
+	//Physics
 	public static long CalculateTime(Train train, int distance) {
 		
-		double F = 1.0;
-		double Vmax = train.getmaxSpeed() * (5.0/18);
-		long P = train.getPower() * 1000;
-		long m = train.getMass() * 1000;
+		double F = 1.0;									//custom introduced friction constant which is used to stimulate friction omitted in the calculations
+														//apparently setting it to 1 gave the most realistic results
+		double Vmax = train.getmaxSpeed() * (5.0/18);	//maximal speed of train in m/s
+		long P = train.getPower() * 1000;				//Power of the train in Watts
+		long m = train.getMass() * 1000;				//Mass of the train in kilogrames
 		
 		if (P==0) {
 			System.out.println("Engine not detected!");
 			return -1;
 		}
 		
-		//Step 1 check if distance allows to reach max speed
+		//check if distance allows to reach max speed
 		double t = (F*m*Vmax*Vmax)/(2*P) + Vmax/(2*a) + (P)/(8*F*m*a*a);
 		double t0 = P/(2*F*m*a*a);
 		
-		//System.out.println(t);
-		//System.out.println(t0);
-		
-		//System.out.println((P*P)/(8*F*F*m*m*a*a*a) + (Vmax*Vmax)/(2*a) + (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t, 1.5) - (P*t)/(2*F*m*a)
-		//		- (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t0, 1.5) + (P*t0)/(2*F*m*a));
-		
 		if (distance >= (P*P)/(8*F*F*m*m*a*a*a) + (Vmax*Vmax)/(2*a) + (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t, 1.5) - (P*t)/(2*F*m*a)
-																	- (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t0, 1.5) + (P*t0)/(2*F*m*a)) {
-			
-			//System.out.println("case a");
-			
+																	- (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t0, 1.5) + (P*t0)/(2*F*m*a)) {			
+			//max speed case
 			distance -= (P*P)/(8*F*F*m*m*a*a*a) + (Vmax*Vmax)/(2*a) + (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t, 1.5) - (P*t)/(2*F*m*a)
 																	- (Math.sqrt((8*P)/(F*m*9))) * Math.pow(t0, 1.5) + (P*t0)/(2*F*m*a);
-			/*
-			System.out.println(t);
-			System.out.println(t0);
-			System.out.println(distance);
-			System.out.println(Vmax);
-			System.out.println(distance/Vmax);
-			System.out.println(Vmax/a);
-			*/
 			
 			return (long) (t0 + t + distance/Vmax + Vmax/a);
 		}
 		
 		else {
-			
-			//System.out.println("case b");
-			
+			//distance doesn't allow to reach max speed
+			//time is calculated by estimation
 			long time;
 			
 			time = (long)  (((distance - (2*P*P)/(8 * Math.pow(F*m*a, 2) * a)) * 2 * F * m * a * a)/
-				(Math.sqrt(2*P*F*m)*a*a*(4/3) + P*a - Math.sqrt((2*P*P*P)/F*m)));
+				(Math.sqrt(2*P*F*m)*a*a*(4/3) + P*a - Math.sqrt((2*P*P*P)/F*m)));		//more or less accurate approximation of time
 			
+			
+			//finally we calculate distance covered within specified time and compare it with the distance that we need to cover
 			if (SmallDistance(train,time) > distance) {
 				while (SmallDistance(train,time) > distance) {
 					time--;
@@ -96,7 +88,8 @@ public class RouteFinder {
 		
 	}
 	
-	private static void PrintStation(Station name) {
+	
+	private static void PrintStation(Station name) {	//Prints station in the nice box
 		int size = name.getName().length();
 		int horizontal_gap = 1;
 		int vertical_gap = 0;
@@ -148,7 +141,7 @@ public class RouteFinder {
 		
 	}
 	
-	private static void PrintConnection(TrainLine line, Station direction, int stops, int time) {
+	private static void PrintConnection(TrainLine line, Station direction, int stops, int time) {	//prints connection in the fancy way
 		
 		int vertical_gap = 1;
 		
@@ -170,11 +163,11 @@ public class RouteFinder {
 		
 	}
 	
-	private static void PrintRoute(Station start,ArrayList<Connection> route) {
+	private static void PrintRoute(Station start,ArrayList<Connection> route) {	//Prints route in the fancy way
 		
-		route = EliminateUsellesExchanges(route);
+		route = EliminateUsellesExchanges(route);		//sanitise route
 		
-		PrintStation(start);
+		PrintStation(start);							//print start
 		
 		Train train;
 		int i=0;
@@ -186,15 +179,16 @@ public class RouteFinder {
 		
 			stopCountStart = i;
 			train = route.get(i).getLine().getTrain();
-			if (train != null) {
-				time = (int) CalculateTime(train,route.get(i).getDistance());
-			}
+			if (train != null) {												//check if the line has any trains
+				time = (int) CalculateTime(train,route.get(i).getDistance());	//if there are no trains time will be ignored
+			}																	
 			else {
 				time = -1;
 				displayTime = false;
 			}
 			
-			while(i+1<route.size() && route.get(i).getLine().equals(route.get(i+1).getLine()) && Math.abs(route.get(i).getStationIndex() - route.get(i+1).getStationIndex()) == 1) {
+			while(i+1<route.size() && route.get(i).getLine().equals(route.get(i+1).getLine()) && 			//calculate number of stops and time before next stop
+				Math.abs(route.get(i).getStationIndex() - route.get(i+1).getStationIndex()) == 1) {
 				i++;
 				if (time >= 0) {
 					time += (int) CalculateTime(train,route.get(i).getDistance());
@@ -205,32 +199,36 @@ public class RouteFinder {
 				totalTime += time;
 			}
 			
-			PrintConnection(route.get(stopCountStart).getLine(),route.get(stopCountStart).getStation(),i-stopCountStart+1,time);
+			PrintConnection(route.get(stopCountStart).getLine(),route.get(stopCountStart).getStation(),i-stopCountStart+1,time);	//print route segment
 			PrintStation(route.get(i).getStation());
 			i++;
 		}
 		
-		if(displayTime) {
+		if(displayTime) {																							//print total time	
 			System.out.printf("Total travel time: %02d:%02d:%02d",totalTime/3600,(totalTime%3600)/60,totalTime%60);
 			System.out.println();
 		}
 	}
 	
-	private static ArrayList<Connection> EliminateUsellesExchanges(ArrayList<Connection> route) {
+	private static ArrayList<Connection> EliminateUsellesExchanges(ArrayList<Connection> route) {		//Lowest distance may add totally useless exchanges
+																										//this function is used to eliminate them	
 		for(int i=1;i<route.size();i++) {
-			if (route.get(i-1).getLine().equals(route.get(i).getLine())) {
+			if (route.get(i-1).getLine().equals(route.get(i).getLine())) {				//continue if there is no transfer
 				continue;
 			} 
 			
-			for(Connection connection: route.get(i-1).getStation().getConnections()) {
-				if (connection.getLine().equals(route.get(i-1).getLine()) && connection.getStation().equals(route.get(i).getStation()) && connection.getDistance() == route.get(i).getDistance() && 1 == Math.abs(connection.getStationIndex() - route.get(i).getStationIndex())) {
-					route.add(i,connection);
-					route.remove(i+1);
-					break;
+			for(Connection connection: route.get(i-1).getStation().getConnections()) {	//if exchange occurs check if you can continue on current line
+				if (connection.getLine().equals(route.get(i-1).getLine()) && 
+					connection.getStation().equals(route.get(i).getStation()) && 
+					connection.getDistance() == route.get(i).getDistance() 
+					&& 1 == Math.abs(connection.getStationIndex() - route.get(i).getStationIndex())) {
+						route.add(i,connection);										//if exchange is not needed replace it
+						route.remove(i+1);
+						break;
 				}
 			}
 		}
-		return route;
+		return route;																	//return updated route
 	}
 	
 	public static void LowestDistance(Station start, Station dest) {
@@ -549,143 +547,6 @@ public class RouteFinder {
 		}
 		
 		return res;
-		
-	}
-
-	
-	public static void FewestExchanges(Station start, Station dest) {
-
-		if(start.equals(dest)) {
-			System.out.println("Start and destination is the same");
-			return;
-		}
-		
-		ArrayList<TrainLine> lines = new ArrayList<TrainLine>();
-		ArrayList<TrainLine> prev_line = new ArrayList<TrainLine>();
-		
-		for(TrainLine i: start.getLines()) {
-			lines.add(i);
-			prev_line.add(null);
-		}
-		
-		int i=0;
-		
-		while(i<lines.size()) {
-			
-			if (lines.get(i).getStations().contains(dest)) {
-				String res = null;
-				TrainLine previousLine = prev_line.get(i);
-				TrainLine nextLine = lines.get(i);
-				
-				res = "Get on " + lines.get(i).getName() + "\n\t Get off at " + dest.getName() + "\n";
-				while(!(previousLine == null)) {
-		
-					Station transfer = null;
-					
-					for(Exchange j: previousLine.getExchanges()) {
-						if (j.getLine().equals(nextLine)) {
-							transfer = j.getStation();
-							break;
-						}
-					}
-		
-					if (transfer == null) {
-						System.out.println("An error has occured");
-						return;
-					}
-					
-					res = "Get on " + previousLine.getName() + "\n\t Get off at " + transfer.getName() + "\n" + res;
-					nextLine = previousLine;
-					previousLine = prev_line.get(lines.indexOf(nextLine));
-				}
-				System.out.println(res);
-				return;
-			}
-			
-			else {
-				for(Exchange j: lines.get(i).getExchanges()) {
-					if (!lines.contains(j.getLine())) {
-						lines.add(j.getLine());
-						prev_line.add(lines.get(i));
-					}
-				}
-			}
-			i++;
-		}
-		
-		
-		System.out.println("Route has not been found");
-		return;
-		
-	}
-
-	public static void FewestExchangesStops(Station start, Station dest) {
-
-		if(start.equals(dest)) {
-			System.out.println("Start and destination is the same");
-			return;
-		}
-		
-		ArrayList<TrainLine> lines = new ArrayList<TrainLine>();
-		ArrayList<Exchange> lineExchange = new ArrayList<Exchange>();
-		
-		for(TrainLine i: start.getLines()) {
-			lines.add(i);
-			lineExchange.add(null);
-		}
-		
-		int i=0;
-		
-		while(i<lines.size()) {
-			
-			if (lines.get(i).getStations().contains(dest)) {
-				String res = null;
-				Exchange exchange = lineExchange.get(i);
-				TrainLine nextLine = lines.get(i);
-				Station before;
-				
-				if (exchange == null) {
-					before = start;
-				}
-				else {
-					before = exchange.getStation();
-				}
-				
-				
-				res = "Get on " + lines.get(i).getName() + "\n\t Ride " + Math.abs(lines.get(i).getStations().indexOf(before) - lines.get(i).getStations().indexOf(dest)) + " stops to " + dest.getName() + "\n";
-				
-				while(!(exchange == null)) {
-					
-					if (lineExchange.get(lines.indexOf(exchange.getLine()))==null) {
-						before=start;
-					}
-					else {
-						before = lineExchange.get(lines.indexOf(exchange.getLine())).getStation();
-					}
-					
-					res = "Get on " + exchange.getLine().getName() + "\n\t Ride " + Math.abs(exchange.getLine().getStations().indexOf(before) - exchange.getLine().getStations().indexOf(exchange.getStation())) + " stops to " + exchange.getStation().getName() + "\n" + res;
-					nextLine = exchange.getLine();
-					exchange = lineExchange.get(lines.indexOf(nextLine));
-				}
-				
-				System.out.println(res);
-				return;
-			}
-			
-			else {
-				for(Exchange j: lines.get(i).getExchanges()) {
-					if (!lines.contains(j.getLine())) {
-						lines.add(j.getLine());
-						lineExchange.add(new Exchange(j.getStation(), lines.get(i)));
-					}
-				}
-			}
-			i++;
-		}
-		
-		
-		System.out.println("Route has not been found");
-		return;
 		
 	}
 }
