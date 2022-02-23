@@ -2,6 +2,11 @@ package trainMaster;
 import namedObjects.*;
 import java.util.ArrayList;
 
+/**
+ * Station object which holds information about
+ * lines stopping at the station
+ * and next stops for those lines
+ */
 public class Station extends NamedObject{
 
 	private static final long serialVersionUID = -1381010956568694060L;
@@ -14,17 +19,17 @@ public class Station extends NamedObject{
 		this.lines = new ArrayList<TrainLine>();
 	}
 	
-	public void addLine(TrainLine line, int distance) {
+	public void addLine(TrainLine line, int distance) {			//adds line to the station
 		
-		if (line.getStations().size() > 1) {
+		if (line.getStations().size() > 1) {																//add connections to this station and previous one	
 			Station prev = line.getStations().get(line.getStations().size() - 2);
 			prev.getConnections().add(new Connection(this,line,distance,line.getStations().size() - 2));
 			connections.add(new Connection(prev,line,distance,line.getStations().size() - 1));
 		}
 		
-		if (!(lines.contains(line))) {
-			lines.add(line);
-			for(TrainLine stationLine: lines) {
+		if (!(lines.contains(line))) {																		
+			lines.add(line);																				//add line if necessary
+			for(TrainLine stationLine: lines) {																//update lines' exchanges if necessary
 				if (stationLine.equals(line)) {
 					continue;
 				}
@@ -34,10 +39,10 @@ public class Station extends NamedObject{
 		}
 	}
 	
-	public void addLineWithoutConnection(TrainLine line) {
+	public void addLineWithoutConnection(TrainLine line) {						//adds line to the station without changing connections
 		if (!(lines.contains(line))) {
-			lines.add(line);
-			for(TrainLine stationLine: lines) {
+			lines.add(line);													//add line if necessary
+			for(TrainLine stationLine: lines) {									//update lines' exchanges if necessary
 				if (stationLine.equals(line)) {
 					continue;
 				}

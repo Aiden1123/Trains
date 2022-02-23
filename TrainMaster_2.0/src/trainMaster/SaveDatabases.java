@@ -10,6 +10,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import trains.*;
 
+/**
+ * SaveDatabses object collects all the databases
+ * so that its is possible to save all data in one file
+ */
 public class SaveDatabases implements Serializable{
 	
 	private static final long serialVersionUID = 63472L;
@@ -31,7 +35,7 @@ public class SaveDatabases implements Serializable{
 		this.trainTemplates = trainTemplates;
 	}
 	
-	public void writeToFile(String filename) {
+	public void writeToFile(String filename) {					//saves databases to file
 		try {
 			FileOutputStream o = new FileOutputStream(new File(filename));
 			ObjectOutputStream output = new ObjectOutputStream(o);
@@ -45,7 +49,7 @@ public class SaveDatabases implements Serializable{
 		}
 	}
 	
-	static public SaveDatabases readFromFile(String filename) {
+	static public SaveDatabases readFromFile(String filename) {				//loads databases from file
 		SaveDatabases aux=null;
 		
 		try {
