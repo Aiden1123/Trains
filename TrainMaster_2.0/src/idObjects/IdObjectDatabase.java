@@ -1,4 +1,5 @@
 package idObjects;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -6,8 +7,12 @@ import java.util.Random;
  * While adding object to the array, the object is assigned unique Id
  * (within this array)
  */
-public class IdObjectDatabase<T extends IdObject> {
+public class IdObjectDatabase<T extends IdObject> implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4813397834416730342L;
 	protected ArrayList<T> array;
 	
 	public IdObjectDatabase() {

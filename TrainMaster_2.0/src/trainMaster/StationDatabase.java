@@ -3,7 +3,7 @@ package trainMaster;
 import namedObjects.*;
 
 /**
- * Object used for managing stations
+ * Used for managing stations
  */
 public class StationDatabase extends UniqueNameDatabase<Station> {
 

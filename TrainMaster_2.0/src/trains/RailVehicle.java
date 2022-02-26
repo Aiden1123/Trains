@@ -1,6 +1,9 @@
 package trains;
 import idObjects.*;
 
+/**
+ *	basic railcar 
+ */
 public class RailVehicle extends IdObject {
 
 	private static final long serialVersionUID = -9040645256763290347L;

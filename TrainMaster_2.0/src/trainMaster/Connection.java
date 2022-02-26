@@ -1,12 +1,18 @@
 package trainMaster;
 
+import java.io.Serializable;
+
 /**Connection object specifies which stations are 
  * reachable within one stop from the station
  * the distance, train line, and index of the station
  * in the given line is also specified
  */
-public class Connection {
+public class Connection implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7262338169334033641L;
 	Station station;
 	TrainLine line;
 	int distance; 		// in meters

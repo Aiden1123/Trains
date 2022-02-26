@@ -3,7 +3,9 @@ import java.util.ArrayList;
 
 import namedObjects.*;
 
-
+/**
+ * Template of a train
+ */
 public class TrainTemplate extends NamedObject{
 
 

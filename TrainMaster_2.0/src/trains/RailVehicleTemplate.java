@@ -1,6 +1,9 @@
 package trains;
 import namedObjects.*;
 
+/**
+ * model of railway vehicle
+ */
 abstract public class RailVehicleTemplate extends NamedObject{
 	
 	private static final long serialVersionUID = -9189385608865751817L;

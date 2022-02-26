@@ -3,11 +3,14 @@ import idObjects.*;
 import trainMaster.*;
 import java.util.*;
 
+/**
+ * Collection of railway vehicles that together form one train
+ */
 public class Train extends IdObject {
 
 	private static final long serialVersionUID = 4892684671273988857L;
 	
-	int mass;		//1000kg
+	int mass;		//tons
 	int power;		//kWh
 	int maxSpeed;	//km/h
 	int length;
@@ -27,7 +30,8 @@ public class Train extends IdObject {
 		line = null;
 	}
 	
-	private void updatemaxSpeed() {
+	private void updatemaxSpeed() {			//function used to set maxSpeed to the maximal speed that each carriage can reach 
+											//(basically the max speed of slowest railcar)
 		if (cars.isEmpty()) {
 			maxSpeed = 0;
 		}
@@ -42,31 +46,35 @@ public class Train extends IdObject {
 		}
 	}
 	
-	public void add(RailVehicle car) {
-		if (car.getTrain()!=null) {
-				car.getTrain().remove(car);
+	public void add(RailVehicle car) {				//adds railway vehicle to train
+		
+		if (car.getTrain()!=null) {					//if car is already appended to a train 
+				car.getTrain().remove(car);			//then detach it
 			}
-		car.setTrain(this);
+		
+		car.setTrain(this);							//attach car to the train
 		cars.add(car);
 		car.getModel().incrementTrainStats(this);
 		updatemaxSpeed();
 	}
 	
-	public void remove(RailVehicle car) {
+	public void remove(RailVehicle car) {		//removes car from train
+		
 		if (cars.contains(car)) {
 			car.setTrain(null);
 			cars.remove(car);
 			car.getModel().decrementTrainStats(this);
 			updatemaxSpeed();
 		}
+		
 	}
 	
-	public void printStats() {
+	public void printStats() {		//prints train specifications
 		System.out.printf("Capacity: %d People\nPower: %d kW\nMaxVelocity: %d km/h\nLength: %d meters\nMass: %d Tonnes\n", capacity, power, maxSpeed,length,mass);
 		System.out.println("Appended to line: " + (line == null ? "None" : line.getName()));
 	}
 	
-	public void printInfo() {
+	public void printInfo() {		//prints train's cars
 		System.out.println("Train\t" + Integer.toString(id));
 		for(RailVehicle car: cars) {
 			System.out.println(car.getModel().getName() + "\t" + Integer.toString(car.getId()));

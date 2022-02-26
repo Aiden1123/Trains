@@ -508,6 +508,14 @@ public class TrainsProgram {
 							}
 							break;
 							
+						case "lineExchanges":
+							if (lines.nameExists(instruction[2])) {
+								lines.find(instruction[2]).printExchanges();
+							} else {
+								System.out.println("Line not found");
+							}
+							break;
+							
 						case "station":
 							if (stations.nameExists(instruction[2])) {
 								stations.find(instruction[2]).printLines();
