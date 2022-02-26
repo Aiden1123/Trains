@@ -1,4 +1,0 @@
-add line Eastbound Westbound Northbound
-append Eastbound Central Mill Outskirts Bushes Plains
-append Westbound Central Commercial Industrial Depot Terminus
-append Northbound Mall Bridge Central Museum Forest Factory Countryside
